@@ -1,0 +1,78 @@
+name: Deploy
+on:
+  workflow_call:
+    inputs:
+      deployment_folder_artifact:
+        description: Deployment Folder Artifact Name
+        required: true
+        type: string
+      stage:
+        description: Stage
+        type: string
+        required: true
+      resource_type:
+        description: Kubernetes Resource Type
+        type: string
+        default: daemonset
+      resource_namespace:
+        description: Kubernetes Resource Namespace
+        type: string
+        default: noor
+      kubectl_version:
+        description: Kubectl Version
+        type: string
+        default: v1.21.11
+    secrets:
+      dockerhub_username:
+        description: Docker Hub Username
+        required: false
+      dockerhub_token:
+        description: Docker Hub Token
+        required: false
+      kube_config:
+        description: Base64 Encoded Kube Config File
+        required: false
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    name: Deploy
+    steps:
+      - uses: NoorDigitalAgency/midday@main
+        with:
+          token: ${{ github.token }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.deployment_folder_artifact }}
+      - id: analyzing
+        name: Analyzing
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = process.env.RELEASE_VERSION;
+            const stage = '${{ inputs.stage }}';
+            const resource = '${{ inputs.resource_type }}';
+            const name = context.payload.repository.name;
+            const label = stage !== 'production' ? `-${ stage }` : '';
+            return {
+              tags: `noorteam/${ name }:${ version },noorteam/${ name }:latest${ label }`,
+              resource: `${ resource }/${ name }${ label }`
+            };
+      - name: Docker Hub Login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.dockerhub_username }}
+          password: ${{ secrets.dockerhub_token }}
+      - name: Docker Hub Push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ fromJson(steps.analyzing.outputs.result).tags }}
+          build-args: E20R_ENV=${{ inputs.stage }}
+      - name: Kubernetes Resource Update
+        run: |
+          mkdir -p ~/.kube
+          echo ${{ secrets.kube_config }} | base64 --decode > ~/.kube/config
+          curl -LO https://dl.k8s.io/release/${{ inputs.kubectl_version }}/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          ./kubectl rollout restart ${{ fromJson(steps.analyzing.outputs.result).resource }} --namespace=${{ inputs.resource_namespace }}
