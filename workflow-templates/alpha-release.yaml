@@ -1,4 +1,4 @@
-name: Release Alpha
+name: Alpha Release
 
 on:
   workflow_dispatch:
