@@ -2,11 +2,12 @@ name: Alpha Release
 
 on:
   workflow_dispatch:
-    reference:
-        type: text
-        required: false
-        description: Optional Git commit SHA after last release and before HEAD of develop
-        default: ''
+    inputs:
+      reference:
+          type: text
+          required: false
+          description: Optional Git commit SHA after last release and before HEAD of develop
+          default: ''
 
 env:
   STAGE: alpha
