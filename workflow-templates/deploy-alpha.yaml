@@ -1,0 +1,22 @@
+name: Deploy Alpha
+
+on:
+  workflow_dispatch:
+    reference:
+        type: text
+        required: false
+        description: Optional, commit SHA new that previous release and current HEAD on develop
+        default: ''
+
+jobs:
+  dawn:
+    name: Dawn
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dawn action
+        uses: NoorDigitalAgency/dawn@main
+        with:
+          stage: ${{ github.event.inputs.stage }}
+          reference: ${{ github.event.inputs.reference }}
+          hotfix: ${{ github.event.inputs.hotfix == 'true' }}
+          token: ${{ secrets.BOT_PAT }}
