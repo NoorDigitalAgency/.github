@@ -69,9 +69,8 @@ jobs:
       stage: alpha
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # TODO: Replace ### with SERVER63_KUBE_CONFIG (for the physical server) or LJN1_KUBE_CONFIG (for the cluster)
-      kube_config: ${{ secrets.### }}
+      dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+      kube_config: ${{ secrets.### }} # TODO: Replace ### with SERVER63_KUBE_CONFIG (for the physical server) or LJN1_KUBE_CONFIG (for the cluster)
 
   release:
     name: Release
