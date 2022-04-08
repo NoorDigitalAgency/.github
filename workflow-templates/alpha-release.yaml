@@ -11,13 +11,12 @@ on:
 
 env:
   STAGE: alpha
-  RUNS_ON: ubuntu-20.04
   KUBE_CONFIG: ${{ secrets.### }} # TODO: Replace ### with SERVER63_KUBE_CONFIG (for the physical server) or LJN1_KUBE_CONFIG (for the cluster)
 
 jobs:
   startup:
     name: Startup
-    runs-on: ${{ env.RUNS_ON }}
+    runs-on: ubuntu-20.04
     steps:
       - uses: NoorDigitalAgency/dawn@main
         with:
@@ -28,7 +27,7 @@ jobs:
   build:
     name: Build
     needs: [startup]
-    runs-on: ${{ env.RUNS_ON }}
+    runs-on: ubuntu-20.04
     steps:
       - uses: NoorDigitalAgency/midday@main
         with:
@@ -52,7 +51,7 @@ jobs:
   test:
     name: Test
     needs: [startup]
-    runs-on: ${{ env.RUNS_ON }}
+    runs-on: ubuntu-20.04
     steps:
       - uses: NoorDigitalAgency/midday@main
         with:
@@ -80,7 +79,7 @@ jobs:
   release:
     name: Release
     needs: [build,test]
-    runs-on: ${{ env.RUNS_ON }}
+    runs-on: ubuntu-20.04
     steps:
       - uses: NoorDigitalAgency/midday@main
         with:
