@@ -1,0 +1,16 @@
+{
+    "name": "Alpha Release Workflow",
+    "description": "Alpha Release CI starter workflow.",
+    "iconName": "alpha-release-icon",
+    "categories": [
+        "C#",
+        "TypeScript",
+        "JavaScript"
+    ],
+    "filePatterns": [
+        "package.json$",
+        "^Dockerfile",
+        ".*\\.sln$",
+        ".*\\.csproj$"
+    ]
+}
