@@ -9,10 +9,6 @@ on:
           description: Optional Git commit SHA after last release and before HEAD of develop
           default: ''
 
-env:
-  STAGE: alpha
-  KUBE_CONFIG: ${{ secrets.### }} # TODO: Replace ### with SERVER63_KUBE_CONFIG (for the physical server) or LJN1_KUBE_CONFIG (for the cluster)
-
 jobs:
   startup:
     name: Startup
@@ -20,7 +16,7 @@ jobs:
     steps:
       - uses: NoorDigitalAgency/dawn@main
         with:
-          stage: ${{ env.STAGE }}
+          stage: alpha
           reference: ${{ github.event.inputs.reference }}
           token: ${{ secrets.BOT_PAT }}
 
@@ -70,11 +66,12 @@ jobs:
     uses: NoorDigitalAgency/.github/.github/workflows/deploy.yaml@main
     with: 
       deployment_folder_artifact: deployment-artifact
-      stage: ${{ env.STAGE }}
+      stage: alpha
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
-      kube_config: ${{ env.KUBE_CONFIG }}
+      # TODO: Replace ### with SERVER63_KUBE_CONFIG (for the physical server) or LJN1_KUBE_CONFIG (for the cluster)
+      kube_config: ${{ secrets.### }}
 
   release:
     name: Release
@@ -86,5 +83,5 @@ jobs:
           token: ${{ github.token }}
       - uses: NoorDigitalAgency/dusk@main
         with:
-          stage: ${{ env.STAGE }}
+          stage: alpha
           token: ${{ github.token }}
