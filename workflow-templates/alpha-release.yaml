@@ -12,7 +12,7 @@ on:
 env:
   STAGE: alpha
   RUNS_ON: ubuntu-20.04
-  KUBE_CONFIG: ${{ secrets.### }} # TODO: Replace ### with the relevant secret name 'SERVER63_KUBE_CONFIG' for the physical server or 'LJN1_KUBE_CONFIG' for the cluster
+  KUBE_CONFIG: ${{ secrets.### }} # TODO: Replace ### with SERVER63_KUBE_CONFIG (for the physical server) or LJN1_KUBE_CONFIG (for the cluster)
 
 jobs:
   startup:
