@@ -6,7 +6,7 @@ on:
       reference:
           type: text
           required: false
-          description: Optional Git commit SHA after last release and before HEAD of develop
+          description: Optional Git Commit SHA
           default: ''
 
 jobs:
