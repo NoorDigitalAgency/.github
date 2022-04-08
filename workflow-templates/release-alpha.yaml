@@ -1,0 +1,90 @@
+name: Release Alpha
+
+on:
+  workflow_dispatch:
+    reference:
+        type: text
+        required: false
+        description: Optional Git commit SHA after last release and before HEAD of develop
+        default: ''
+
+env:
+  STAGE: alpha
+  RUNS_ON: ubuntu-20.04
+  KUBE_CONFIG: ${{ secrets.### }} # TODO: Replace ### with the relevant secret name 'SERVER63_KUBE_CONFIG' for the physical server or 'LJN1_KUBE_CONFIG' for the cluster
+
+jobs:
+  startup:
+    name: Startup
+    runs-on: ${{ env.RUNS_ON }}
+    steps:
+      - uses: NoorDigitalAgency/dawn@main
+        with:
+          stage: ${{ env.STAGE }}
+          reference: ${{ github.event.inputs.reference }}
+          token: ${{ secrets.BOT_PAT }}
+
+  build:
+    name: Build
+    needs: [startup]
+    runs-on: ${{ env.RUNS_ON }}
+    steps:
+      - uses: NoorDigitalAgency/midday@main
+        with:
+          token: ${{ github.token }}
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.RELEASE_REFERENCE }}
+          submodules: recursive
+      
+      # TODO: Steps for building the source
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: deployment-artifact
+          retention-days: 2
+          # TODO: Add path to assets used in the deployment. For details on 'path' refer to https://github.com/actions/upload-artifact#usage
+          path: |
+            Dockerfile
+            outputs
+
+  test:
+    name: Test
+    needs: [startup]
+    runs-on: ${{ env.RUNS_ON }}
+    steps:
+      - uses: NoorDigitalAgency/midday@main
+        with:
+          token: ${{ github.token }}
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.RELEASE_REFERENCE }}
+          submodules: recursive
+          
+      # TODO: Steps for testing the code
+
+
+  deploy:
+    name: Deploy
+    needs: [build,test]
+    uses: NoorDigitalAgency/.github/.github/workflows/deploy.yaml@main
+    with: 
+      deployment_folder_artifact: deployment-artifact
+      stage: ${{ env.STAGE }}
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
+      kube_config: ${{ env.KUBE_CONFIG }}
+
+  release:
+    name: Release
+    needs: [build,test]
+    runs-on: ${{ env.RUNS_ON }}
+    steps:
+      - uses: NoorDigitalAgency/midday@main
+        with:
+          token: ${{ github.token }}
+      - uses: NoorDigitalAgency/dusk@main
+        with:
+          stage: ${{ env.STAGE }}
+          token: ${{ github.token }}
