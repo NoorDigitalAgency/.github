@@ -1,7 +1,7 @@
 {
     "name": "Alpha Release Workflow",
     "description": "Alpha Release CI/CD starter workflow.",
-    "iconName": "alpha-release-icon",
+    "iconName": "release-icon",
     "categories": [
         "C#",
         "TypeScript",
