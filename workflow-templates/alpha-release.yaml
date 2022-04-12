@@ -12,7 +12,7 @@ on:
 jobs:
   startup:
     name: Startup
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/dawn@main
         with:
@@ -23,7 +23,7 @@ jobs:
   build:
     name: Build
     needs: [startup]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/midday@main
         with:
@@ -46,7 +46,7 @@ jobs:
   test:
     name: Test
     needs: [startup]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/midday@main
         with:
@@ -73,7 +73,7 @@ jobs:
   release:
     name: Release
     needs: [build,test]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/midday@main
         with:
@@ -82,3 +82,13 @@ jobs:
         with:
           stage: alpha
           token: ${{ github.token }}
+          
+  uncache:
+    name: Uncache
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/uncacher@main
+        with:
+          api_token: ${{ secrets.UNCACHER_API_TOKEN }}
+          domain: ${{ secrets.### }} # TODO: Replace ### with the domain to be uncached
