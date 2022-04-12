@@ -1,0 +1,16 @@
+{
+    "name": "Beta Release Workflow",
+    "description": "Beta Release CI/CD starter workflow.",
+    "iconName": "beta-release-icon",
+    "categories": [
+        "C#",
+        "TypeScript",
+        "JavaScript"
+    ],
+    "filePatterns": [
+        "package.json$",
+        "^Dockerfile",
+        ".*\\.sln$",
+        ".*\\.csproj$"
+    ]
+}
