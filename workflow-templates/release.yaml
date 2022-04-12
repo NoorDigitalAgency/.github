@@ -1,4 +1,4 @@
-name: Alpha Release
+name: Alpha Release 
 
 on:
   workflow_dispatch:
@@ -32,6 +32,7 @@ jobs:
         with:
           ref: ${{ env.RELEASE_REFERENCE }}
           submodules: recursive
+          
       # TODO: Steps for building the source
       
       - uses: actions/upload-artifact@v3
@@ -55,6 +56,7 @@ jobs:
         with:
           ref: ${{ env.RELEASE_REFERENCE }}
           submodules: recursive
+          
       # TODO: Steps for testing the code
 
 
@@ -91,4 +93,4 @@ jobs:
       - uses: NoorDigitalAgency/uncacher@main
         with:
           api_token: ${{ secrets.UNCACHER_API_TOKEN }}
-          domain: ${{ secrets.### }} # TODO: Replace ### with the domain to be uncached
+          domain: ${{ secrets.STAGE_DOMAIN }}
