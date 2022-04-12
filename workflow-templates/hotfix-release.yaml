@@ -1,0 +1,100 @@
+name: Hotfix Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      reference:
+          type: text
+          required: true
+          description: Hotfix Branch Name
+
+jobs:
+  startup:
+    name: Startup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/dawn@main
+        with:
+          stage: production
+          reference: ${{ github.event.inputs.reference }}
+          token: ${{ secrets.BOT_PAT }}
+          hotfix: true
+
+  build:
+    name: Build
+    needs: [startup]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/midday@main
+        with:
+          token: ${{ github.token }}
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.RELEASE_REFERENCE }}
+          submodules: recursive
+          
+      # TODO: Steps for building the source
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: deployment-artifact
+          retention-days: 2
+          # TODO: Add path to assets used in the deployment. For details on 'path' refer to https://github.com/actions/upload-artifact#usage
+          path: |
+            Dockerfile
+            outputs
+  
+  test:
+    name: Test
+    needs: [startup]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/midday@main
+        with:
+          token: ${{ github.token }}
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.RELEASE_REFERENCE }}
+          submodules: recursive
+          
+      # TODO: Steps for testing the code
+
+
+  deploy:
+    name: Deploy
+    needs: [build,test]
+    uses: NoorDigitalAgency/.github/.github/workflows/deploy.yaml@main
+    with: 
+      deployment_folder_artifact: deployment-artifact
+      stage: production
+    secrets:
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+      kube_config: ${{ secrets.### }} # TODO: Replace ### with SERVER63_KUBE_CONFIG (for the physical server) or LJN1_KUBE_CONFIG (for the cluster)
+
+  release:
+    name: Release
+    needs: [build,test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/midday@main
+        with:
+          token: ${{ github.token }}
+      - uses: NoorDigitalAgency/dusk@main
+        with:
+          stage: production
+          token: ${{ github.token }}
+          
+  uncache:
+    name: Uncache
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/uncacher@main
+        with:
+          api_token: ${{ secrets.UNCACHER_API_TOKEN }}
+          domain: ${{ secrets.PRODUCTION_DOMAIN }}
+      - uses: NoorDigitalAgency/uncacher@main
+        with:
+          api_token: ${{ secrets.UNCACHER_API_TOKEN }}
+          domain: ${{ secrets.API_DOMAIN }}
