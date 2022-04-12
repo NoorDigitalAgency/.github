@@ -28,18 +28,7 @@ jobs:
   test:
     name: Test
     needs: [startup]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: NoorDigitalAgency/midday@main
-        with:
-          token: ${{ github.token }}
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ env.RELEASE_REFERENCE }}
-          submodules: recursive
-          
-      # TODO: Steps for testing the code
-
+    uses: ./.github/workflows/test.yaml
 
   deploy:
     name: Deploy
