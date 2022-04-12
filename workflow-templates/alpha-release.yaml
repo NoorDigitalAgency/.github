@@ -32,7 +32,6 @@ jobs:
         with:
           ref: ${{ env.RELEASE_REFERENCE }}
           submodules: recursive
-      
       # TODO: Steps for building the source
       
       - uses: actions/upload-artifact@v3
@@ -56,7 +55,6 @@ jobs:
         with:
           ref: ${{ env.RELEASE_REFERENCE }}
           submodules: recursive
-          
       # TODO: Steps for testing the code
 
 
