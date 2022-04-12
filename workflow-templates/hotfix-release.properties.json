@@ -1,0 +1,16 @@
+{
+    "name": "Hotfix Release Workflow",
+    "description": "Hotfix Release CI/CD starter workflow.",
+    "iconName": "release-icon",
+    "categories": [
+        "C#",
+        "TypeScript",
+        "JavaScript"
+    ],
+    "filePatterns": [
+        "package.json$",
+        "^Dockerfile",
+        ".*\\.sln$",
+        ".*\\.csproj$"
+    ]
+}
