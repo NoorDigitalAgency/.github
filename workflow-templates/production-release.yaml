@@ -12,6 +12,7 @@ on:
 jobs:
   startup:
     name: Startup
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/dawn@main
