@@ -1,0 +1,16 @@
+{
+    "name": "Production Release Workflow",
+    "description": "Production Release CI/CD starter workflow.",
+    "iconName": "release-icon",
+    "categories": [
+        "C#",
+        "TypeScript",
+        "JavaScript"
+    ],
+    "filePatterns": [
+        "package.json$",
+        "^Dockerfile",
+        ".*\\.sln$",
+        ".*\\.csproj$"
+    ]
+}
