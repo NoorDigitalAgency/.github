@@ -1,0 +1,16 @@
+{
+    "name": "Build Job Reusable Workflow",
+    "description": "Build Job CI/CD starter workflow.",
+    "iconName": "release-icon",
+    "categories": [
+        "C#",
+        "TypeScript",
+        "JavaScript"
+    ],
+    "filePatterns": [
+        "package.json$",
+        "^Dockerfile",
+        ".*\\.sln$",
+        ".*\\.csproj$"
+    ]
+}
