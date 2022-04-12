@@ -1,7 +1,7 @@
 {
     "name": "Beta Release Workflow",
     "description": "Beta Release CI/CD starter workflow.",
-    "iconName": "beta-release-icon",
+    "iconName": "release-icon",
     "categories": [
         "C#",
         "TypeScript",
