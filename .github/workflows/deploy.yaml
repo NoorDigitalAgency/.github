@@ -34,10 +34,10 @@ on:
         required: false
 jobs:
   deploy:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: Deploy
     steps:
-      - uses: NoorDigitalAgency/midday@main
+      - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
       - uses: actions/download-artifact@v3
