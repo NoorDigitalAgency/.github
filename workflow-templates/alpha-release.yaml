@@ -1,4 +1,4 @@
-name: Alpha Release 
+name: Alpha Release
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
     environment: alpha
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/dawn@main
+      - uses: NoorDigitalAgency/release-startup@main
         with:
           stage: alpha
           reference: ${{ github.event.inputs.reference }}
@@ -35,7 +35,7 @@ jobs:
     name: Deploy
     needs: [build,test]
     uses: NoorDigitalAgency/.github/.github/workflows/deploy.yaml@main
-    with: 
+    with:
       deployment_folder_artifact: deployment-artifact
       stage: alpha
     secrets:
@@ -48,14 +48,14 @@ jobs:
     needs: [build,test]
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/midday@main
+      - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
-      - uses: NoorDigitalAgency/dusk@main
+      - uses: NoorDigitalAgency/release-publish@main
         with:
           stage: alpha
           token: ${{ github.token }}
-          
+
   uncache:
     name: Uncache
     needs: [deploy]

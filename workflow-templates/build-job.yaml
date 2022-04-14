@@ -8,16 +8,16 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/midday@main
+      - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
       - uses: actions/checkout@v2
         with:
           ref: ${{ env.RELEASE_REFERENCE }}
           submodules: recursive
-          
+
       # TODO: Steps for building the source
-      
+
       - uses: actions/upload-artifact@v3
         with:
           name: deployment-artifact

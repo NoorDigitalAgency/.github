@@ -8,12 +8,12 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/midday@main
+      - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
       - uses: actions/checkout@v2
         with:
           ref: ${{ env.RELEASE_REFERENCE }}
           submodules: recursive
-          
+
       # TODO: Steps for testing the code

@@ -14,7 +14,7 @@ jobs:
     environment: production
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/dawn@main
+      - uses: NoorDigitalAgency/release-startup@main
         with:
           stage: production
           reference: ${{ github.event.inputs.reference }}
@@ -25,7 +25,7 @@ jobs:
     name: Build
     needs: [startup]
     uses: ./.github/workflows/build.yaml
-  
+
   test:
     name: Test
     needs: [startup]
@@ -35,7 +35,7 @@ jobs:
     name: Deploy
     needs: [build,test]
     uses: NoorDigitalAgency/.github/.github/workflows/deploy.yaml@main
-    with: 
+    with:
       deployment_folder_artifact: deployment-artifact
       stage: production
     secrets:
@@ -48,14 +48,14 @@ jobs:
     needs: [build,test]
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/midday@main
+      - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
-      - uses: NoorDigitalAgency/dusk@main
+      - uses: NoorDigitalAgency/release-publish@main
         with:
           stage: production
           token: ${{ github.token }}
-          
+
   uncache:
     name: Uncache
     needs: [deploy]
@@ -69,3 +69,10 @@ jobs:
         with:
           api_token: ${{ secrets.UNCACHER_API_TOKEN }}
           domain: ${{ secrets.API_DOMAIN }}
+
+  post-hotfox:
+    name: Post Hotfix
+    needs: [deploy]
+    uses: NoorDigitalAgency/.github/.github/workflows/post-hotfix.yaml@main
+    with:
+      hotfix_branch: ${{ github.event.inputs.reference }}

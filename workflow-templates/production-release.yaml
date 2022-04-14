@@ -1,4 +1,4 @@
-name: Production Release 
+name: Production Release
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
     environment: production
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/dawn@main
+      - uses: NoorDigitalAgency/release-startup@main
         with:
           stage: production
           reference: ${{ github.event.inputs.reference }}
@@ -30,7 +30,7 @@ jobs:
     name: Deploy
     needs: [build]
     uses: NoorDigitalAgency/.github/.github/workflows/deploy.yaml@main
-    with: 
+    with:
       deployment_folder_artifact: deployment-artifact
       stage: production
     secrets:
@@ -43,14 +43,14 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/midday@main
+      - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
-      - uses: NoorDigitalAgency/dusk@main
+      - uses: NoorDigitalAgency/release-publish@main
         with:
           stage: production
           token: ${{ github.token }}
-          
+
   uncache:
     name: Uncache
     needs: [deploy]
