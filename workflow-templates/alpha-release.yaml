@@ -65,4 +65,4 @@ jobs:
       - uses: NoorDigitalAgency/cloudflare-uncache@main
         with:
           api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          domain: ${{ secrets.STAGE_DOMAIN }}
+          domain: ${{ secrets.STAGE_DOMAIN }} # TODO: Set the respective domain secret
