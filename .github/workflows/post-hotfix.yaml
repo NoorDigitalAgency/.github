@@ -16,7 +16,7 @@ jobs:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
-      - uses: action/github-script@v6
+      - uses: actions/github-script@v6
         with:
           script: |
               const inspect = require('util').inspect;
