@@ -24,7 +24,7 @@ jobs:
   build:
     name: Build
     needs: [startup]
-    uses: ./.github/workflows/build-job.yaml
+    uses: ./.github/workflows/build-job.yaml # TODO: Chcek to match the correct extension .yaml or .yml
 
   deploy:
     name: Deploy
