@@ -56,7 +56,7 @@ jobs:
     needs: [deploy]
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/uncacher@main
+      - uses: NoorDigitalAgency/cloudflare-uncache@main
         with:
-          api_token: ${{ secrets.UNCACHER_API_TOKEN }}
+          api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           domain: ${{ secrets.STAGE_DOMAIN }}
