@@ -28,5 +28,5 @@ jobs:
                 startGroup('Error');
                 core.debug(`${inspect(error, { depth: 5 })}`);
                 endGroup();
-                core.warning('Failed to ');
+                core.warning('Failed to create merge-back pull request.');
               }
