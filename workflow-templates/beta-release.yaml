@@ -24,7 +24,7 @@ jobs:
   build:
     name: Build
     needs: [startup]
-    uses: ./.github/workflows/build.yaml
+    uses: ./.github/workflows/build-job.yaml
 
   deploy:
     name: Deploy
