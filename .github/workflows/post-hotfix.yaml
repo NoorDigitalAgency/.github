@@ -24,7 +24,7 @@ jobs:
                 const title = 'Generated PR for hotfix/${{ env.RELEASE_VERSION }}';
                 const body = '**Merge Back** pull request **(develop🠔${{ inputs.hotfix_branch }})** for **hotfix** release version **${{ env.RELEASE_VERSION }}**.';
                 await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, base: 'develop', head: '${{ inputs.hotfix_branch }}', title, body });
-              catch (error) {
+              } catch (error) {
                 startGroup('Error');
                 core.debug(`${inspect(error, { depth: 5 })}`);
                 endGroup();
