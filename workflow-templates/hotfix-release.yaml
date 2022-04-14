@@ -64,11 +64,11 @@ jobs:
     steps:
       - uses: NoorDigitalAgency/cloudflare-uncache@main
         with:
-          api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }} # TODO: Set the respective secret
           domain: ${{ secrets.PRODUCTION_DOMAIN }} # TODO: Set the respective domain secret
       - uses: NoorDigitalAgency/cloudflare-uncache@main # TODO: Remove if not applicable
         with:
-          api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }} # TODO: Set the respective secret
           domain: ${{ secrets.API_DOMAIN }} # TODO: Set the respective domain secret
 
   post-hotfox:
