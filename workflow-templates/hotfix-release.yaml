@@ -38,6 +38,7 @@ jobs:
     with:
       deployment_folder_artifact: deployment-artifact
       stage: production
+      # TODO: Add resource_type: deployment if needed otherwise remove this TODO (Defaults to daemonset)
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
