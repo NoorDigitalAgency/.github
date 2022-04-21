@@ -1,0 +1,27 @@
+name: Auto Merge
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.token }}
+          script: |
+              function wait(milliseconds) {
+                return new Promise((resolve) => setTimeout(resolve, milliseconds));
+              }
+              let pull = { mergable: null, number: context.payload.number };
+              while (pull.mergeable == null) {
+                await wait(5000);
+                pull = (await github.rest.pulls.get({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pull.number })).data;
+              }
+              if (pull.mergeable) {
+                await github.rest.pulls.merge({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pull.number, merge_method: 'merge' });
+              }
