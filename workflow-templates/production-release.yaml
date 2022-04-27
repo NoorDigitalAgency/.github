@@ -67,3 +67,10 @@ jobs:
         with:
           api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }} # TODO: Set the respective secret
           domain: ${{ secrets.API_DOMAIN }} # TODO: Set the respective domain secret
+
+  mark:
+    name: Mark Issues
+    needs: [deploy,release]
+    uses: NoorDigitalAgency/.github/.github/workflows/mark-issues.yaml@main
+    secrets:
+      token: ${{ secrets.BOT_PAT }}
