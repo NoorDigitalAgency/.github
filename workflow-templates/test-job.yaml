@@ -13,10 +13,11 @@ jobs:
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
-          token: ${{ secrets.token }}
+          token: ${{ github.token }}
       - uses: actions/checkout@v2
         with:
           ref: ${{ env.RELEASE_REFERENCE }}
           submodules: recursive
+          token: ${{ secrets.token }}
 
       # TODO: Steps for testing the code
