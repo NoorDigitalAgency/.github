@@ -4,6 +4,7 @@ on:
   workflow_call:
     secrets:
       token:
+        description: Token
         required: true
 
 jobs:
