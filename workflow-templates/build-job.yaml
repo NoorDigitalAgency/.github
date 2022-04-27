@@ -2,6 +2,9 @@ name: Build Job
 
 on:
   workflow_call:
+    secrets:
+      token:
+        required: true
 
 jobs:
   build:
@@ -10,11 +13,12 @@ jobs:
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.token }}
       - uses: actions/checkout@v2
         with:
           ref: ${{ env.RELEASE_REFERENCE }}
           submodules: recursive
+          token: ${{ secrets.token }}
 
       # TODO: Steps for building the source
 
