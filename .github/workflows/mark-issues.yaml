@@ -20,10 +20,7 @@ jobs:
           token: ${{ secrets.token }}
           fetch-depth: 0
           ref: ${{ env.RELEASE_VERSION }}
-      - run: |
-          git tag
-          git log ${{ env.RELEASE_PREVIOUS_VERSION }}...${{ env.RELEASE_VERSION }} --reverse --merges --oneline --no-abbrev-commit --grep='Merge pull request #'
-          git log ${{ env.RELEASE_VERSION }}...${{ env.RELEASE_PREVIOUS_VERSION }} --reverse --merges --oneline --no-abbrev-commit --grep='Merge pull request #'
+      - run: git log ${{ env.RELEASE_PREVIOUS_VERSION }}...${{ env.RELEASE_VERSION }} --reverse --merges --oneline --no-abbrev-commit --grep='Merge pull request #'
       - uses: NoorDigitalAgency/issue-marker@main
         with:
           token: ${{ secrets.token }}
