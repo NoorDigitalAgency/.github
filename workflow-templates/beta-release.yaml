@@ -25,6 +25,8 @@ jobs:
     name: Build
     needs: [startup]
     uses: ./.github/workflows/build-job.yaml # TODO: Chcek to match the correct extension .yaml or .yml
+    secrets:
+      token: ${{ secrets.BOT_PAT }}
 
   deploy:
     name: Deploy
