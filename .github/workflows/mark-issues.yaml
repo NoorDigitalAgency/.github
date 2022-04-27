@@ -1,0 +1,25 @@
+name: Mark Issues
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        required: true
+
+jobs:
+  mark:
+    name: Mark Issues
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/release-lookup@main
+        with:
+          token: ${{ github.token }}
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.token }}
+          fetch-depth: 0
+      - uses: NoorDigitalAgency/issue-marker@main
+        with:
+          token: ${{ secrets.token }}
+          version: ${{ env.RELEASE_VERSION }}
+          previous-version: ${{ env.RELEASE_PREVIOUS_VERSION }}
