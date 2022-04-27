@@ -81,3 +81,10 @@ jobs:
     uses: NoorDigitalAgency/.github/.github/workflows/post-hotfix.yaml@main
     with:
       hotfix_branch: ${{ github.event.inputs.reference }}
+
+  mark:
+    name: Mark Issues
+    needs: [deploy,release]
+    uses: NoorDigitalAgency/.github/.github/workflows/mark-issues.yaml@main
+    secrets:
+      token: ${{ secrets.BOT_PAT }}
