@@ -19,6 +19,7 @@ jobs:
         with:
           token: ${{ secrets.token }}
           fetch-depth: 0
+          ref: ${{ env.RELEASE_VERSION }}
       - uses: NoorDigitalAgency/issue-marker@main
         with:
           token: ${{ secrets.token }}
