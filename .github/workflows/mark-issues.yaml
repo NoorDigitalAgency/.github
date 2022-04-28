@@ -2,6 +2,11 @@ name: Mark Issues
 
 on:
   workflow_call:
+    inputs:
+      close-issues:
+        description: Close Issues on Merge to Production
+        type: boolean
+        default: true
     secrets:
       token:
         description: Token
@@ -26,4 +31,4 @@ jobs:
           reference: ${{ env.RELEASE_REFERENCE }}
           version: ${{ env.RELEASE_VERSION }}
           previous-version: ${{ env.RELEASE_PREVIOUS_VERSION }}
-          close-issues: 'true'
+          close-issues: ${{ inputs.close-issues }}
