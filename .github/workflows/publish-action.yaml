@@ -28,4 +28,4 @@ jobs:
         npm run all
         git config --global user.name "Noor's GitHub Bot"
         git config --global user.email "noorgithubbot@github"
-        git diff-index --quiet HEAD || (git commit -a -m'Automated build and publish by Noor's GitHub Bot' --allow-empty && git push -f)
+        git diff-index --quiet HEAD || (git commit -a -m"Automated build and publish by Noor's GitHub Bot" --allow-empty && git push -f)
