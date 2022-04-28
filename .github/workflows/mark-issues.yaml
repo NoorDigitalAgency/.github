@@ -23,5 +23,6 @@ jobs:
       - uses: NoorDigitalAgency/issue-marker@main
         with:
           token: ${{ secrets.token }}
+          reference: ${{ env.RELEASE_REFERENCE }}
           version: ${{ env.RELEASE_VERSION }}
           previous-version: ${{ env.RELEASE_PREVIOUS_VERSION }}
