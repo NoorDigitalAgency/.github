@@ -26,3 +26,4 @@ jobs:
           reference: ${{ env.RELEASE_REFERENCE }}
           version: ${{ env.RELEASE_VERSION }}
           previous-version: ${{ env.RELEASE_PREVIOUS_VERSION }}
+          close-issues: 'true'
