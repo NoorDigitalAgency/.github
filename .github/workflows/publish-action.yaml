@@ -5,9 +5,11 @@ on:
     inputs:
       branch:
         description: Branch to checkout
+        type: string
+        default: 'main'
     secrets:
       token:
-        required: true
+        required: false
 
 jobs:
   publish:
@@ -15,14 +17,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        ref: main
+        ref: ${{ inputs.branch }}
+        fetch-depth: 0
+        token: ${{ secrets.token || github.token }}
     - uses: actions/setup-node@v3
       with:
         node-version: 16.x
     - run: |
         npm i
         npm run all
-        git config --global user.name "Rojan Gh."
-        git config --global user.email "sojaner@github"
-        git add -A
-        git diff-index --quiet HEAD -- || git commit -m "Automated build and publish" || git push
+        git config --global user.name "Noor's GitHub Bot"
+        git config --global user.email "noorgithubbot@github"
+        git diff-index --quiet HEAD || (git commit -a -m'Automated build and publish by Noor's GitHub Bot' --allow-empty && git push -f)
