@@ -1,0 +1,28 @@
+name: Publish GitHub Action
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: Branch to checkout
+    secrets:
+      token:
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: main
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - run: |
+        npm i
+        npm run all
+        git config --global user.name "Rojan Gh."
+        git config --global user.email "sojaner@github"
+        git add -A
+        git diff-index --quiet HEAD -- || git commit -m "Automated build and publish" || git push
