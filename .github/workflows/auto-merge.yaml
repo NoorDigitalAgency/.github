@@ -17,11 +17,15 @@ jobs:
               function wait(milliseconds) {
                 return new Promise((resolve) => setTimeout(resolve, milliseconds));
               }
+              console.log(context);
               let pull = { mergable: null, number: context.payload.number };
+              console.log(pull);
               while (pull.mergeable == null) {
                 await wait(5000);
                 pull = (await github.rest.pulls.get({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pull.number })).data;
+                console.log(pull);
               }
               if (pull.mergeable) {
+                console.log(pull);
                 await github.rest.pulls.merge({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pull.number, merge_method: 'merge' });
               }
