@@ -14,11 +14,18 @@ jobs:
         with:
           github-token: ${{ secrets.token || github.token }}
           script: |
+              function parsePullRequestId(githubRef) {
+                const result = /refs\/pull\/(\d+)\/merge/g.exec(githubRef);
+                if (!result) throw new Error("Reference not found.");
+                const [, pullRequestId] = result;
+                return pullRequestId;
+              }
               function wait(milliseconds) {
                 return new Promise((resolve) => setTimeout(resolve, milliseconds));
               }
-              console.log(context);
-              let pull = { mergable: null, number: context.payload.number };
+              const pullRequestId = parsePullRequestId(process.env.GITHUB_REF);
+              console.log(pullRequestId);
+              let pull = { mergable: null, number: pullRequestId };
               console.log(pull);
               while (pull.mergeable == null) {
                 await wait(5000);
