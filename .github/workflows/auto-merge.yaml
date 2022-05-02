@@ -23,7 +23,7 @@ jobs:
               function wait(milliseconds) {
                 return new Promise((resolve) => setTimeout(resolve, milliseconds));
               }
-              const pullRequestId = parsePullRequestId(process.env.GITHUB_REF);
+              /*const pullRequestId = parsePullRequestId(process.env.GITHUB_REF);
               console.log(pullRequestId);
               let pull = { mergable: null, number: pullRequestId };
               console.log(pull);
@@ -35,4 +35,5 @@ jobs:
               if (pull.mergeable) {
                 console.log(pull);
                 await github.rest.pulls.merge({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pull.number, merge_method: 'merge' });
-              }
+              }*/
+              console.log(process.env);
