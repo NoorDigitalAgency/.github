@@ -1,7 +1,7 @@
 name: Downgrade
 
 on:
-  worflow_call:
+ workflow_call:
     inputs:
       version:
         type: string
@@ -13,4 +13,4 @@ jobs:
     name: Downgrade
     runs-on: ubuntu-latest
     steps:
-      run: echo 'Hi'
+      - run: echo 'Hi'
