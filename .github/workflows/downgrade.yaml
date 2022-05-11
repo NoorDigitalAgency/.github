@@ -1,0 +1,16 @@
+name: Downgrade
+
+on:
+  worflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: Version to Downgrade to
+
+jobs:
+  downgrade:
+    name: Downgrade
+    runs-on: ubuntu-latest
+    steps:
+      run: echo 'Hi'
