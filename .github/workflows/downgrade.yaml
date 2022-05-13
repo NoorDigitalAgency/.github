@@ -1,16 +1,63 @@
 name: Downgrade
 
 on:
- workflow_call:
+  workflow_call:
     inputs:
       version:
+        description: Version to downgrade to
         type: string
         required: true
-        description: Version to Downgrade to
+      environment:
+        description: Execution environment
+        type: string
+        required: true
 
 jobs:
   downgrade:
+    environment: ${{ inputs.environment }}
     name: Downgrade
     runs-on: ubuntu-latest
     steps:
-      - run: echo 'Hi'
+      - uses: actions/github-script@v6
+        id: branch
+        with:
+          script: |
+            const version = '${{ inputs.version }}';
+            return version.includes('-alpha.') ? 'develop' : version.includes('-beta.') ? 'release' : 'main';
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ steps.branch.outputs.result }}
+
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const version = '${{ inputs.version }}';
+            const releases = [];
+            let page = 1;
+            let count;
+            do {
+              const pagedReleases = ((await github.rest.repos.listReleases({ owner: context.repo.owner, repo: context.repo.repo, page, per_page: 100 })).data);
+              count = pagedReleases.length;
+              releases.push(...pagedReleases.filter(release => release.name?.startsWith('v20')).map(release => ({
+                tag: release.tag_name, branch: release.tag_name.includes('-alpha.') ? 'develop' :
+                release.tag_name.includes('-beta.') ? 'release' : 'main', creation: Date.parse(release.published_at ?? release.created_at), published: !release.draft, id: release.id
+              })));
+              page++;
+            } while (count > 0);
+            const release = releases.find(r => r.tag === version);
+            if (release == null) {
+              core.setFailed(`Version ${version} doesn't exist.`);
+              return;
+            }
+            for (const r of releases.filter(re => re.creation > release.creation)) {
+              await exec.exec('git', ['push', '--delete', 'origin', r.tag]);
+              await github.rest.repos.deleteRelease({ owner: context.repo.owner, repo: context.repo.repo, release_id: r.id });
+            }
+
+      - run: |
+          git reset --hard ${{ inputs.version }}
+          git config --global user.name "Noor's GitHub Bot"
+          git config --global user.email "noorgithubbot@github"
+          git push --force origin
