@@ -67,11 +67,11 @@ jobs:
 
       - name: Kubernetes Resource Update
         run: |
-          docker pull ${{ fromJson(steps.analyzing.outputs.result).version }}
-          docker tag ${{ fromJson(steps.analyzing.outputs.result).version }} ${{ fromJson(steps.analyzing.outputs.result).latest }}
           mkdir -p ~/.kube
           echo ${{ secrets.kube_config }} | base64 --decode > ~/.kube/config
           curl -LO https://dl.k8s.io/release/${{ inputs.kubectl_version }}/bin/linux/amd64/kubectl
           chmod +x ./kubectl
-          ./kubectl rollout undo deployment/frontend --to-revision=2
+          docker pull ${{ fromJson(steps.analyzing.outputs.result).version }}
+          docker tag ${{ fromJson(steps.analyzing.outputs.result).version }} ${{ fromJson(steps.analyzing.outputs.result).latest }}
+          docker push ${{ fromJson(steps.analyzing.outputs.result).latest }}
           ./kubectl rollout restart ${{ fromJson(steps.analyzing.outputs.result).resource }} --namespace=${{ inputs.resource_namespace }}
