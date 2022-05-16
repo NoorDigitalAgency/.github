@@ -18,10 +18,6 @@ on:
         description: Kubectl Version
         type: string
         default: v1.21.11
-      git_only:
-        description: Only revert the Git and do not revert the containers
-        type: boolean
-        default: false
 
     secrets:
       dockerhub_username:
@@ -65,7 +61,6 @@ jobs:
             };
 
       - name: Docker Hub Login
-        if: (!inputs.git_only)
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.dockerhub_username }}
