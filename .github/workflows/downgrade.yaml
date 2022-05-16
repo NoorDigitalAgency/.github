@@ -7,10 +7,14 @@ on:
         description: Version to downgrade to
         type: string
         required: true
+      environment:
+        description: Execution environment
+        type: string
+        required: true
 
 jobs:
   downgrade:
-    name: Downgrade
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v6
