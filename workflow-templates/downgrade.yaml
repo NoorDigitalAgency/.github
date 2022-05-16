@@ -46,6 +46,6 @@ jobs:
     with:
       version: ${{ github.event.inputs.version }}
       environment: ${{ needs.version-check.environment }}
-      dockerhub_username: ${{ secrets.dockerhub_username }}
-      dockerhub_token: ${{ secrets.dockerhub_token }}
-      kube_config: ${{ secrets.kube_config }}
+      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+      kube_config: ${{ secrets.### }} # TODO: Replace ### with SERVER63_KUBE_CONFIG (for the physical server) or LJN1_KUBE_CONFIG (for the cluster)
