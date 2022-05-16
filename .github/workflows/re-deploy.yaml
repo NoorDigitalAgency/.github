@@ -19,9 +19,16 @@ on:
         type: string
         default: v1.21.11
     secrets:
+      dockerhub_username:
+        description: Docker Hub Username
+        required: true
+      dockerhub_token:
+        description: Docker Hub Token
+        required: true
       kube_config:
         description: Base64 Encoded Kube Config File
-        required: false
+        required: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -51,8 +58,17 @@ jobs:
               latest: `noorteam/${ name }:latest${ label }`,
               resource: `${ resource }/${ name }${ label }`
             };
+
+      - name: Docker Hub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.dockerhub_username }}
+          password: ${{ secrets.dockerhub_token }}
+
       - name: Kubernetes Resource Update
         run: |
+          docker pull ${{ fromJson(steps.analyzing.outputs.result).version }}
+          docker tag ${{ fromJson(steps.analyzing.outputs.result).version }} ${{ fromJson(steps.analyzing.outputs.result).latest }}
           mkdir -p ~/.kube
           echo ${{ secrets.kube_config }} | base64 --decode > ~/.kube/config
           curl -LO https://dl.k8s.io/release/${{ inputs.kubectl_version }}/bin/linux/amd64/kubectl
