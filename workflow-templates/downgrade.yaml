@@ -1,4 +1,4 @@
-name: Downgrade
+name: Downgrade Action
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
 jobs:
   version-check:
     name: Version Check
-    runs-on: ubuntu-x64
+    runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.check.outputs.result }}
     steps:
@@ -34,7 +34,18 @@ jobs:
   downgrade:
     name: Downgrade
     needs: [version-check]
-    uses: NoorDigitalAgency/.github/.github/workflows/downgrade.yaml@main
+    uses: ./.github/workflows/downgrade.yaml
     with:
       version: ${{ github.event.inputs.version }}
       environment: ${{ needs.version-check.environment }}
+
+  re-deploy:
+    name: Re-deploy
+    needs: [version-check]
+    uses: ./.github/workflows/re-deploy.yaml
+    with:
+      version: ${{ github.event.inputs.version }}
+      environment: ${{ needs.version-check.environment }}
+      dockerhub_username: ${{ secrets.dockerhub_username }}
+      dockerhub_token: ${{ secrets.dockerhub_token }}
+      kube_config: ${{ secrets.kube_config }}
