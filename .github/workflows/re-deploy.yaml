@@ -1,0 +1,61 @@
+name: Re-deploy
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Deployment Version
+        type: string
+        required: true
+      resource_type:
+        description: Kubernetes Resource Type
+        type: string
+        default: daemonset
+      resource_namespace:
+        description: Kubernetes Resource Namespace
+        type: string
+        default: noor
+      kubectl_version:
+        description: Kubectl Version
+        type: string
+        default: v1.21.11
+    secrets:
+      kube_config:
+        description: Base64 Encoded Kube Config File
+        required: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Re-deploy
+    steps:
+      - id: analyzing
+        name: Analyzing
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = '${{ inputs.version }}';
+            let stage;
+            if (!/^v20\d{2}(?:\.\d{1,3}){1,2}(?:(?:-alpha\.|-beta\.)\d{1,3})?$/.test(version))
+            {
+              core.setFailed(`Invalid version "${version}".`);
+              return;
+            }
+            else
+            {
+              stage = version.includes('-alpha.') ? 'alpha' : version.includes('-beta.') ? 'beta' : 'production';
+            }
+            const resource = '${{ inputs.resource_type }}';
+            const name = context.payload.repository.name;
+            const label = stage !== 'production' ? `-${ stage }` : '';
+            return {
+              version: `noorteam/${ name }:${ version }`,
+              latest: `noorteam/${ name }:latest${ label }`,
+              resource: `${ resource }/${ name }${ label }`
+            };
+      - name: Kubernetes Resource Update
+        run: |
+          mkdir -p ~/.kube
+          echo ${{ secrets.kube_config }} | base64 --decode > ~/.kube/config
+          curl -LO https://dl.k8s.io/release/${{ inputs.kubectl_version }}/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          ./kubectl rollout undo deployment/frontend --to-revision=2
+          ./kubectl rollout restart ${{ fromJson(steps.analyzing.outputs.result).resource }} --namespace=${{ inputs.resource_namespace }}
