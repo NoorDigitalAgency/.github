@@ -18,6 +18,10 @@ on:
         description: Kubectl Version
         type: string
         default: v1.21.11
+      environment:
+        description: Execution environment
+        type: string
+        required: true
     secrets:
       dockerhub_username:
         description: Docker Hub Username
@@ -28,9 +32,10 @@ on:
       kube_config:
         description: Base64 Encoded Kube Config File
         required: true
-
+    
 jobs:
   deploy:
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     name: Re-deploy
     steps:
