@@ -1,0 +1,70 @@
+name: .NET Build Job
+
+on:
+  workflow_call:
+    secrets:
+      # TODO: Add all the placeholder variables, example:
+      #alpha-sql-password:
+        #required: true
+      #beta-sql-password:
+        #required: true
+      token:
+        required: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/release-lookup@main
+        with:
+          token: ${{ secrets.token }}
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ env.RELEASE_REFERENCE }}
+          submodules: recursive
+          token: ${{ secrets.token }}
+
+      - uses: actions/setup-dotnet@v2
+        with:
+          source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
+          dotnet-version: '6.0.x'
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.token}}
+
+      - name: Add Alpha secrets
+        # TODO: Correct the path to the file
+        run: |
+          envsubst < ./appsettings.develop.json | tee ./appsettings.develop.json
+        env:
+          # TODO: Add all the placeholder variables, example:
+          #SQL_PASSWORD: ${{ secrets.alpha-sql-password }}
+
+      - name: Add Beta secrets
+        # TODO: Correct the path to the file
+        run: |
+          envsubst < ./appsettings.release.json | tee ./appsettings.release.json
+        env:
+          # TODO: Add all the placeholder variables, example:
+          #SQL_PASSWORD: ${{ secrets.beta-sql-password }}
+
+      - name: Add Production secrets
+        # TODO: Correct the path to the file
+        run: |
+          envsubst < ./appsettings.production.json | tee ./appsettings.production.json
+        env:
+          # TODO: Add all the placeholder variables, example:
+          #SQL_PASSWORD: ${{ secrets.production-sql-password }}
+
+      - run: |
+          # Tip: Add extra nuget sources like 'dotnet nuget add source https://www.myget.org/F/cachemanager/api/v3/index.json -n myget'
+          dotnet publish -c Release -r ubuntu-x64 -o outputs -p:InformationalVersion=${{ env.RELEASE_VERSION }} ./project.csproj # TODO: Correct the path to the project file
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: deployment-artifact
+          retention-days: 2
+          path: |
+            Dockerfile
+            outputs
