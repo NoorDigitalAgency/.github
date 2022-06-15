@@ -69,25 +69,15 @@ jobs:
           # TODO: Add all the placeholder variables, example:
           #SQL_PASSWORD: ${{ secrets.production-sql-password }}
 
-      - id: test
-        run: |
+      # TODO: If needed, change the 'cd .' command to either where the solution is located or where the tests project is located
+      - run: |
           # Tip: Add extra nuget sources like 'dotnet nuget add source https://www.myget.org/F/cachemanager/api/v3/index.json -n myget'
-          cd ./Tests/ # TODO: Correct this to either where the solution is located or where the tests project is located
-          mkdir ./test-results
+          cd .
           dotnet test --logger "trx;logfilename=$(pwd)/test-results/test-reports.trx"
-          dotnet tool install --global LiquidTestReports.Cli --version 1.3.2-beta
+
+      - run: |
           [ -f "$(pwd)/test-results/test-reports.trx" ] && \
-            echo liquid --inputs "File=$(pwd)/test-results/test-reports.trx;Format=Trx" --output-file "$(pwd)/test-results/test-reports.md" && \
-            echo echo "::set-output name=report-generated::true" || \
-            echo echo "::set-output name=report-generated::false"
-
-      - if: steps.test.outputs.report-generated == 'true'
-        uses: actions/upload-artifact@v3
-        with:
-          name: deployment-artifact
-          retention-days: 30
-          path: |
-            test-reports.md
-
-      - if: steps.test.outputs.report-generated == 'false'
-        run: echo "::warning::No Unit Tests where found in the project!"
+            dotnet tool install --global LiquidTestReports.Cli --version 1.3.2-beta && \
+            liquid --inputs "File=$(pwd)/test-results/test-reports.trx;Format=Trx" --output-file "$(pwd)/test-results/test-reports.md" && \
+            cat "${{ steps.test.outputs.path }}" >> $GITHUB_STEP_SUMMARY || \
+            echo "::warning::No Unit Tests where found in the project!"
