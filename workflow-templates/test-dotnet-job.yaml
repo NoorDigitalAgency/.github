@@ -76,12 +76,12 @@ jobs:
           mkdir ./test-results
           dotnet test --logger "trx;logfilename=$(pwd)/test-results/test-reports.trx"
           dotnet tool install --global LiquidTestReports.Cli --version 1.3.2-beta
-          [ -f "$(pwd)/test-results/test-reports.md" ] && \
+          [ -f "$(pwd)/test-results/test-reports.trx" ] && \
             echo liquid --inputs "File=$(pwd)/test-results/test-reports.trx;Format=Trx" --output-file "$(pwd)/test-results/test-reports.md" && \
             echo echo "::set-output name=report-generated::true" || \
             echo echo "::set-output name=report-generated::false"
 
-      - if: steps.test.outputes.report-generated == 'true'
+      - if: steps.test.outputs.report-generated == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: deployment-artifact
@@ -89,5 +89,5 @@ jobs:
           path: |
             test-reports.md
 
-      - if: steps.test.outputes.report-generated == 'false'
+      - if: steps.test.outputs.report-generated == 'false'
         run: echo "::warning::No Unit Tests where found in the project!"
