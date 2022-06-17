@@ -1,0 +1,23 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [develop, main]
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  test:
+    uses: ./.github/workflows/test-job.yaml # TODO: Chcek to match the correct extension .yaml or .yml
+    secrets:
+      token: ${{ secrets.BOT_PAT }}
+
+  build:
+    uses: ./.github/workflows/build-job.yaml # TODO: Chcek to match the correct extension .yaml or .yml
+    secrets:
+      token: ${{ secrets.BOT_PAT }}
+
+  reviews:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'review'
