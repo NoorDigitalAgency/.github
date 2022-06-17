@@ -28,13 +28,14 @@ jobs:
         options: --health-cmd sqlserver_isready
 
     steps:
-      - uses: NoorDigitalAgency/release-lookup@main
+      - if: github.event_name != 'pull_request'
+        uses: NoorDigitalAgency/release-lookup@main
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.token }}
 
       - uses: actions/checkout@v3
         with:
-          ref: ${{ env.RELEASE_REFERENCE }}
+          ref: ${{ github.event_name != 'pull_request' && env.RELEASE_REFERENCE || github.event.pull_request.head.ref }}
           submodules: recursive
           token: ${{ secrets.token }}
 
@@ -43,7 +44,7 @@ jobs:
           source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
           dotnet-version: '6.0.x'
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.token}}
+          NUGET_AUTH_TOKEN: ${{ secrets.token }}
 
       - name: Add Alpha secrets
         # TODO: Correct the path to the file
