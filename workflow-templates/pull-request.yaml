@@ -2,22 +2,21 @@ name: PR Check
 
 on:
   pull_request:
-    branches: [develop, main]
+    branches: [develop]
     types: [opened, edited, reopened, synchronize]
-
+    
 jobs:
   test:
-    uses: ./.github/workflows/test-job.yaml # TODO: Chcek to match the correct extension .yaml or .yml
+    uses: ./.github/workflows/test.yaml # TODO: Update to the actual test workflow
     secrets:
       token: ${{ secrets.BOT_PAT }}
-
+      
   build:
-    uses: ./.github/workflows/build-job.yaml # TODO: Chcek to match the correct extension .yaml or .yml
+    uses: ./.github/workflows/build.yaml # TODO: Update to the actual build workflow
     secrets:
       token: ${{ secrets.BOT_PAT }}
-
-  reviews:
-    needs: [test, build]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo 'review'
+      
+  reviewers:
+    uses: NoorDigitalAgency/.github/.github/workflows/reviewers.yaml@main
+    with:
+      strict: false # TODO: Set to true if reviews are mandetory
