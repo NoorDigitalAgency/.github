@@ -1,0 +1,19 @@
+name: Entity Framework Migrations
+
+on:
+  workflow_call:
+    inputs:
+      reference:
+        description: Git reference
+        type: string
+        required: true
+      connection-string:
+        description: Database connection string
+        type: string
+        required: true
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo
