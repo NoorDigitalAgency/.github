@@ -1,0 +1,16 @@
+{
+    "name": "Pull Request Checks Workflow",
+    "description": "Pull Request Checks CI/CD starter workflow.",
+    "iconName": "release-icon",
+    "categories": [
+        "C#",
+        "TypeScript",
+        "JavaScript"
+    ],
+    "filePatterns": [
+        "package.json$",
+        "^Dockerfile",
+        ".*\\.sln$",
+        ".*\\.csproj$"
+    ]
+}
