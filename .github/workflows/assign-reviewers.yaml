@@ -1,15 +1,55 @@
-name: Assign Pull Request Reviewers
+name: Assign Reviewers
 
 on:
   workflow_call:
     inputs:
       strict:
+        type: boolean
         description: Throws error on assignment failure
         default: true
         
 jobs:
   assign:
     runs-on: ubuntu-latest
-    name: Assign Reviewers
+    name: Assign
     steps:
-      - run: echo
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          token: ${{ secrets.github_token }}
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const strict = ${{ inputs.strict }};
+            const fs = require('fs');
+            const path = './.github/reviewers.json';
+            let reviewers = {users: [], teams: []};
+            if (fs.existsSync(path)) {
+              try {
+                reviewers = JSON.parse(fs.readFileSync(path, 'utf8'));
+              } catch {
+                const error = `Problem in parsing the ${path} file.`;
+                if (strict) {
+                  core.setFailed(error);
+                  return;
+                } else {
+                  core.warning(error);
+                }
+              }
+            } else if (strict) {
+              core.setFailed(`The ${path} file does not exist.`);
+              return;
+            }
+            const author = context.payload?.pull_request?.user?.login;
+            reviewers = typeof(reviewers) === 'object' ? {...reviewers, users: reviewers?.users?.filter(u => u.toLowerCase() !== author.toLowerCase())} : {users: [], teams: []};
+            if ((reviewers?.users?.length ?? 0 > 0) || (reviewers?.teams?.length ?? 0 > 0)) {
+              await github.rest.pulls.requestReviewers({ owner: context.repo.owner, repo: context.repo.repo, pull_number: ${{ github.event.pull_request.number }}, reviewers: reviewers?.users ?? [], team_reviewers: reviewers?.teams ?? [] });
+            } else {
+              const error = `Could not choose a suitable reviewer for this pull request.`;
+              if (strict) {
+                core.setFailed(error);
+                return;
+              } else {
+                core.warning(error);
+              }
+            }
