@@ -11,7 +11,6 @@ on:
 jobs:
   startup:
     name: Startup
-    environment: production
     runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/release-startup@main
@@ -23,17 +22,20 @@ jobs:
 
   build:
     name: Build
+    environment: production
     needs: [startup]
-    uses: ./.github/workflows/build-job.yaml # TODO: Chcek to match the correct extension .yaml or .yml
-    secrets:
-      token: ${{ secrets.BOT_PAT }}
+    uses: ./.github/workflows/build-job.yaml # TODO: Chcek to match the correct file name
+    with:
+      stage: production
+    secrets: inherit
 
   test:
     name: Test
     needs: [startup]
-    uses: ./.github/workflows/test-job.yaml # TODO: Chcek to match the correct extension .yaml or .yml
-    secrets:
-      token: ${{ secrets.BOT_PAT }}
+    uses: ./.github/workflows/test-job.yaml # TODO: Chcek to match the correct file name
+    with:
+      stage: alpha
+    secrets: inherit
 
   deploy:
     name: Deploy
@@ -46,7 +48,7 @@ jobs:
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
-      kube_config: ${{ secrets.### }} # TODO: Replace ### with SERVER63_KUBE_CONFIG (for the physical server) or LJN1_KUBE_CONFIG (for the cluster)
+      kube_config: ${{ secrets.KUBE_CONFIG }}
 
   release:
     name: Release
@@ -68,12 +70,12 @@ jobs:
     steps:
       - uses: NoorDigitalAgency/cloudflare-uncache@main
         with:
-          api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }} # TODO: Set the respective secret
-          domain: ${{ secrets.PRODUCTION_DOMAIN }} # TODO: Set the respective domain secret
-      - uses: NoorDigitalAgency/cloudflare-uncache@main # TODO: Remove if not applicable
+          api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          domain: jobdev.se # TODO: Update accordingly
+      - uses: NoorDigitalAgency/cloudflare-uncache@main # NOTE: Example of un-caching multiple domains
         with:
-          api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }} # TODO: Set the respective secret
-          domain: ${{ secrets.API_DOMAIN }} # TODO: Set the respective domain secret
+          api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          domain: job-api.se # TODO: Update accordingly
 
   post-hotfox:
     name: Post Hotfix

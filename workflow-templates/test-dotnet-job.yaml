@@ -1,15 +1,12 @@
-name: Test Job
+name: .NET Test Job
 
 on:
   workflow_call:
-    secrets:
-      # TODO: Add all the placeholder variables, example:
-      #alpha-sql-password:
-        #required: true
-      #beta-sql-password:
-        #required: true
-      token:
+    inputs:
+      stage:
+        description: Current stage name
         required: true
+        type: string
 
 jobs:
   test:
@@ -24,51 +21,38 @@ jobs:
           - 1433:1433
         env:
           DATABASE_USERNAME: user
-          DATABASE_NAMES: database # Note: You can add multiple databases like postnoor, golight, lynx
+          DATABASE_NAMES: database # Note: You can add multiple databases like 'postnoor, golight, lynx'
         options: --health-cmd sqlserver_isready
 
     steps:
       - if: github.event_name != 'pull_request'
         uses: NoorDigitalAgency/release-lookup@main
         with:
-          token: ${{ secrets.token }}
+          token: ${{ secrets.PAT }}
 
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event_name != 'pull_request' && env.RELEASE_REFERENCE || github.event.pull_request.head.ref }}
           submodules: recursive
-          token: ${{ secrets.token }}
+          token: ${{ secrets.PAT }}
 
       - uses: actions/setup-dotnet@v2
         with:
           source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
           dotnet-version: '6.0.x'
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.token }}
+          NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
-      - name: Add Alpha secrets
-        # TODO: Correct the path to the file
-        run: |
-          envsubst < ./appsettings.develop.json | tee ./appsettings.develop.json
-        env:
-          # TODO: Add all the placeholder variables, example:
-          #SQL_PASSWORD: ${{ secrets.alpha-sql-password }}
+      - uses: dopplerhq/cli-action@v1
 
-      - name: Add Beta secrets
-        # TODO: Correct the path to the file
-        run: |
-          envsubst < ./appsettings.release.json | tee ./appsettings.release.json
+      # TODO: Change the 'cd .' command to point to the directory where the appsettings files exist
+      - run: |
+          cd .
+          [ '${{ inputs.stage }}' == 'alpha' ] && doppler secrets substitute appsettings.develop.tmpl --output appsettings.develop.json || \
+          [ '${{ inputs.stage }}' == 'beta' ] && doppler secrets substitute appsettings.release.tmpl --output appsettings.release.json || \
+          [ '${{ inputs.stage }}' == 'production' ] && doppler secrets substitute appsettings.production.tmpl --output appsettings.production.json
         env:
-          # TODO: Add all the placeholder variables, example:
-          #SQL_PASSWORD: ${{ secrets.beta-sql-password }}
-
-      - name: Add Production secrets
-        # TODO: Correct the path to the file
-        run: |
-          envsubst < ./appsettings.production.json | tee ./appsettings.production.json
-        env:
-          # TODO: Add all the placeholder variables, example:
-          #SQL_PASSWORD: ${{ secrets.production-sql-password }}
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
       # TODO: If needed, change the 'cd .' command to either where the solution is located or where the tests project is located
       - id: test
@@ -81,7 +65,7 @@ jobs:
       - run: |
           path="${{ steps.test.outputs.path }}"
           [ -f "$path/test-reports.trx" ] && \
-            dotnet tool install --global LiquidTestReports.Cli --version 1.3.2-beta && \
+            dotnet tool install --global --prerelease LiquidTestReports.Cli && \
             liquid --inputs "File=$path/test-reports.trx;Format=Trx" --output-file "$path/test-reports.md" && \
             cat "$path/test-reports.md" >> $GITHUB_STEP_SUMMARY || \
             echo "::warning::No Unit Tests where found in the project!"
