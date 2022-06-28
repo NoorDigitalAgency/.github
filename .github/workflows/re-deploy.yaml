@@ -32,7 +32,7 @@ on:
       kube_config:
         description: Base64 Encoded Kube Config File
         required: true
-    
+
 jobs:
   deploy:
     environment: ${{ inputs.environment }}

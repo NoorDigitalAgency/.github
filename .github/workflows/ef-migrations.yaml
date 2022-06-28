@@ -31,4 +31,3 @@ jobs:
       - run: dotnet ef migrations bundle --verbose --project "${{ inputs.project-path }}"
       - run: chmod +x ./bundle
       - run: ./bundle --connection "${{ secrets.connection-string }}"
-      

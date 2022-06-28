@@ -4,18 +4,18 @@ on:
   pull_request:
     branches: [develop]
     types: [opened, edited, reopened, synchronize]
-    
+
 jobs:
   test:
     uses: ./.github/workflows/test.yaml # TODO: Update to the actual test workflow
     secrets:
-      token: ${{ secrets.BOT_PAT }}
-      
+      token: ${{ secrets.PAT }}
+
   build:
     uses: ./.github/workflows/build.yaml # TODO: Update to the actual build workflow
     secrets:
-      token: ${{ secrets.BOT_PAT }}
-      
+      token: ${{ secrets.PAT }}
+
   reviewers:
     uses: NoorDigitalAgency/.github/.github/workflows/reviewers.yaml@main
     with:

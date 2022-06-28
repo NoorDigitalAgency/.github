@@ -7,7 +7,7 @@ on:
         type: boolean
         description: Throws error on assignment failure
         default: true
-        
+
 jobs:
   assign:
     runs-on: ubuntu-latest
