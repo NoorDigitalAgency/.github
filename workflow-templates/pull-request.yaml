@@ -19,6 +19,6 @@ jobs:
     secrets: inherit
 
   reviewers:
-    uses: NoorDigitalAgency/.github/.github/workflows/reviewers.yaml@main
+    uses: NoorDigitalAgency/.github/.github/workflows/assign-reviewers.yaml@main
     with:
       strict: false # TODO: Set to true if reviews are mandetory
