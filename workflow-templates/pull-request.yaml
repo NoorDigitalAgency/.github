@@ -8,6 +8,8 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/test-job.yaml # TODO: Check to match the correct file name
+    with:
+      stage: alpha
     secrets: inherit
 
   build:
