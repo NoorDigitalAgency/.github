@@ -34,7 +34,7 @@ jobs:
   downgrade:
     name: Downgrade
     needs: [version-check]
-    uses: ./.github/workflows/downgrade.yaml
+    uses: NoorDigitalAgency/.github/.github/workflows/downgrade.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
       environment: ${{ needs.version-check.environment }}
@@ -42,7 +42,7 @@ jobs:
   re-deploy:
     name: Re-deploy
     needs: [version-check]
-    uses: ./.github/workflows/re-deploy.yaml
+    uses: NoorDigitalAgency/.github/.github/workflows/re-deploy.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
       environment: ${{ needs.version-check.environment }}
