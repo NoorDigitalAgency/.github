@@ -1,5 +1,5 @@
 {
-    "name": "Alpha Release Workflow",
+    "name": "Alpha Release",
     "description": "Alpha Release CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
