@@ -1,5 +1,5 @@
 {
-    "name": "Pull Request Checks Workflow",
+    "name": "Pull Request Checks",
     "description": "Pull Request Checks CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
