@@ -1,5 +1,5 @@
 {
-  "name": ".NET Build Job Reusable Workflow",
+  "name": ".NET Build Job",
   "description": ".NET Build Job CI/CD starter workflow.",
   "iconName": "release-icon",
   "categories": [
