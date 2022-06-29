@@ -37,10 +37,13 @@ jobs:
           submodules: recursive
           token: ${{ secrets.PAT }}
 
+      # NOTE: dotnet version 5.0.x is required for the markdown report generator
       - uses: actions/setup-dotnet@v2
         with:
           source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
-          dotnet-version: '6.0.x'
+          dotnet-version: |
+            6.0.x
+            5.0.x
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
@@ -49,9 +52,9 @@ jobs:
       # TODO: Change the 'cd .' command to point to the directory where the appsettings files exist
       - run: |
           cd .
-          [ '${{ inputs.stage }}' == 'alpha' ] && doppler secrets substitute appsettings.develop.json.tmpl --output appsettings.develop.json || \
-          [ '${{ inputs.stage }}' == 'beta' ] && doppler secrets substitute appsettings.release.json.tmpl --output appsettings.release.json || \
-          [ '${{ inputs.stage }}' == 'production' ] && doppler secrets substitute appsettings.production.json.tmpl --output appsettings.production.json
+          [ '${{ inputs.stage }}' == 'alpha' ] && doppler secrets substitute appsettings.develop.json.tmpl --output appsettings.develop.json || (\
+          [ '${{ inputs.stage }}' == 'beta' ] && doppler secrets substitute appsettings.release.json.tmpl --output appsettings.release.json || (\
+          [ '${{ inputs.stage }}' == 'production' ] && doppler secrets substitute appsettings.production.json.tmpl --output appsettings.production.json))
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
