@@ -34,12 +34,10 @@ jobs:
 
       - uses: dopplerhq/cli-action@v1
 
-      # TODO: Change the 'cd .' command to point to the directory where the appsettings files exist
+      # TODO: Change the 'cd .' command to point to the directory where the settings template files exist
       - run: |
           cd .
-          [ '${{ inputs.stage }}' == 'alpha' ] && doppler secrets substitute appsettings.develop.json.tmpl --output appsettings.develop.json || (\
-          [ '${{ inputs.stage }}' == 'beta' ] && doppler secrets substitute appsettings.release.json.tmpl --output appsettings.release.json || (\
-          [ '${{ inputs.stage }}' == 'production' ] && doppler secrets substitute appsettings.production.json.tmpl --output appsettings.production.json))
+          doppler secrets substitute appsettings.json.tmpl --output appsettings.json
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
