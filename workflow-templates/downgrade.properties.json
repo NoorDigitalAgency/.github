@@ -1,5 +1,5 @@
 {
-    "name": "Downgrade Workflow",
+    "name": "Downgrade",
     "description": "Downgrade CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
