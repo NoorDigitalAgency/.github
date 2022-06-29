@@ -17,7 +17,7 @@ on:
       resource_namespace:
         description: Kubernetes Resource Namespace
         type: string
-        default: noor
+        default: default
       kubectl_version:
         description: Kubectl Version
         type: string
