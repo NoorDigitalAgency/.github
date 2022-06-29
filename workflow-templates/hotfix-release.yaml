@@ -32,6 +32,8 @@ jobs:
     name: Test
     needs: [startup]
     uses: ./.github/workflows/test-job.yaml # TODO: Check to match the correct file name
+    with:
+      stage: production
     secrets: inherit
 
   deploy:
