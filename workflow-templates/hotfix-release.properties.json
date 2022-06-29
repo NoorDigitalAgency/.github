@@ -1,5 +1,5 @@
 {
-    "name": "Hotfix Release Workflow",
+    "name": "Hotfix Release",
     "description": "Hotfix Release CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
