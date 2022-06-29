@@ -1,5 +1,5 @@
 {
-    "name": "Beta Release Workflow",
+    "name": "Beta Release",
     "description": "Beta Release CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
