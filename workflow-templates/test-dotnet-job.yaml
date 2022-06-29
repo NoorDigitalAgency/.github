@@ -2,12 +2,17 @@ name: .NET Test Job
 
 on:
   workflow_call:
+    inputs:
+      stage:
+        description: Current stage name
+        required: true
+        type: string
 
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    environment: alpha
+    environment: ${{ inputs.stage }}
 
     # Note: Local SQL Server for DB tests
     services:
