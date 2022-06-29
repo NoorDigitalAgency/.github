@@ -22,7 +22,6 @@ jobs:
 
   build:
     name: Build
-    environment: beta
     needs: [startup]
     uses: ./.github/workflows/build-job.yaml # TODO: Chcek to match the correct file name
     with:
