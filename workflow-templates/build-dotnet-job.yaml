@@ -36,9 +36,9 @@ jobs:
       # TODO: Change the 'cd .' command to point to the directory where the appsettings files exist
       - run: |
           cd .
-          [ '${{ inputs.stage }}' == 'alpha' ] && doppler secrets substitute appsettings.develop.tmpl --output appsettings.develop.json || \
-          [ '${{ inputs.stage }}' == 'beta' ] && doppler secrets substitute appsettings.release.tmpl --output appsettings.release.json || \
-          [ '${{ inputs.stage }}' == 'production' ] && doppler secrets substitute appsettings.production.tmpl --output appsettings.production.json
+          [ '${{ inputs.stage }}' == 'alpha' ] && doppler secrets substitute appsettings.develop.json.tmpl --output appsettings.develop.json || \
+          [ '${{ inputs.stage }}' == 'beta' ] && doppler secrets substitute appsettings.release.json.tmpl --output appsettings.release.json || \
+          [ '${{ inputs.stage }}' == 'production' ] && doppler secrets substitute appsettings.production.json.tmpl --output appsettings.production.json
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
