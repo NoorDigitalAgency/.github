@@ -1,5 +1,5 @@
 {
-    "name": "General Build Job Reusable Workflow",
+    "name": "General Build Job",
     "description": "General Build Job CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
