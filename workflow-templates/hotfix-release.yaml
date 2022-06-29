@@ -23,7 +23,7 @@ jobs:
   build:
     name: Build
     needs: [startup]
-    uses: ./.github/workflows/build-job.yaml # TODO: Chcek to match the correct file name
+    uses: ./.github/workflows/build-job.yaml # TODO: Check to match the correct file name
     with:
       stage: production
     secrets: inherit
@@ -31,7 +31,7 @@ jobs:
   test:
     name: Test
     needs: [startup]
-    uses: ./.github/workflows/test-job.yaml # TODO: Chcek to match the correct file name
+    uses: ./.github/workflows/test-job.yaml # TODO: Check to match the correct file name
     with:
       stage: alpha
     secrets: inherit
@@ -43,6 +43,7 @@ jobs:
     with:
       deployment_folder_artifact: deployment-artifact
       stage: production
+      resource_namespace: default # TODO: Update if needed
       # TODO: Add "resource_type: deployment" if needed otherwise remove this TODO (Defaults to daemonset)
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
