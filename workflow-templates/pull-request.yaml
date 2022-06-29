@@ -7,12 +7,12 @@ on:
 
 jobs:
   test:
-    uses: ./.github/workflows/test.yaml # TODO: Update to the actual test workflow
+    uses: ./.github/workflows/test-job.yaml # TODO: Update to the actual test workflow
     secrets:
       token: ${{ secrets.PAT }}
 
   build:
-    uses: ./.github/workflows/build.yaml # TODO: Update to the actual build workflow
+    uses: ./.github/workflows/build-job.yaml # TODO: Update to the actual build workflow
     secrets:
       token: ${{ secrets.PAT }}
 
