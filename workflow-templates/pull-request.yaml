@@ -7,14 +7,14 @@ on:
 
 jobs:
   test:
-    uses: ./.github/workflows/test-job.yaml # TODO: Update to the actual test workflow
-    secrets:
-      token: ${{ secrets.PAT }}
+    uses: ./.github/workflows/test-job.yaml # TODO: Check to match the correct file name
+    secrets: inherit
 
   build:
-    uses: ./.github/workflows/build-job.yaml # TODO: Update to the actual build workflow
-    secrets:
-      token: ${{ secrets.PAT }}
+    uses: ./.github/workflows/build-job.yaml # TODO: Check to match the correct file name
+    with:
+      stage: alpha
+    secrets: inherit
 
   reviewers:
     uses: NoorDigitalAgency/.github/.github/workflows/reviewers.yaml@main
