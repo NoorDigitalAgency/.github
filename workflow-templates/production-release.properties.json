@@ -1,5 +1,5 @@
 {
-    "name": "Production Release Workflow",
+    "name": "Production Release",
     "description": "Production Release CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
