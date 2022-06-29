@@ -1,5 +1,5 @@
 {
-    "name": "Test Job Reusable Workflow",
+    "name": "General Test Job",
     "description": "Test Job CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
