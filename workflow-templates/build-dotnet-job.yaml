@@ -44,7 +44,8 @@ jobs:
       # TODO: Correct the path to the project file
       - run: dotnet publish -c Release -r ubuntu-x64 -o outputs --self-contained -p:InformationalVersion=${{ env.RELEASE_VERSION }} ./project.csproj
 
-      - uses: actions/upload-artifact@v3
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v3
         with:
           name: deployment-artifact
           retention-days: 2
