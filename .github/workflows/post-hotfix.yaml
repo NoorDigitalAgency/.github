@@ -10,7 +10,7 @@ on:
       release_pull_request:
         description: Create merge-back pull request into release
         type: boolean
-        default: true
+        default: false
 
 jobs:
   pull-request:
