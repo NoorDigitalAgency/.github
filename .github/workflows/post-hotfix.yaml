@@ -7,6 +7,10 @@ on:
         description: Branch name containing the hofix code
         type: string
         required: true
+      release_pull_request:
+        description: Create merge-back pull request into release
+        type: boolean
+        default: true
 
 jobs:
   pull-request:
@@ -21,12 +25,27 @@ jobs:
           script: |
               const inspect = require('util').inspect;
               try {
-                const title = 'Generated PR for hotfix/${{ env.RELEASE_VERSION }}';
-                const body = '**Merge Back** pull request **(develop🠔${{ inputs.hotfix_branch }})** for **hotfix** release version **${{ env.RELEASE_VERSION }}**.';
+                const title = 'Generated PR for hotfix/${{ env.RELEASE_VERSION }} into develop';
+                const body = '**Merge Back** pull request **(develop🠔${{ inputs.hotfix_branch }})** for **hotfix** version **${{ env.RELEASE_VERSION }}**.';
                 await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, base: 'develop', head: '${{ inputs.hotfix_branch }}', title, body });
               } catch (error) {
                 core.startGroup('Error');
                 core.debug(`${inspect(error, { depth: 5 })}`);
                 core.endGroup();
-                core.warning('Failed to create merge-back pull request.');
+                core.warning('Failed to create merge-back pull request into develop.');
+              }
+      - if: ${{ inputs.release_pull_request }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+              const inspect = require('util').inspect;
+              try {
+                const title = 'Generated PR for hotfix/${{ env.RELEASE_VERSION }} into release';
+                const body = '**Merge Back** pull request **(release🠔${{ inputs.hotfix_branch }})** for **hotfix** version **${{ env.RELEASE_VERSION }}**.';
+                await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, base: 'release', head: '${{ inputs.hotfix_branch }}', title, body });
+              } catch (error) {
+                core.startGroup('Error');
+                core.debug(`${inspect(error, { depth: 5 })}`);
+                core.endGroup();
+                core.warning('Failed to create merge-back pull request into release.');
               }
