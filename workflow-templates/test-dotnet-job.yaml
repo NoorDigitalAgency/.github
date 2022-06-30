@@ -63,7 +63,8 @@ jobs:
           path="$(pwd)/test-results" && echo "::set-output name=path::$path"
           dotnet test --logger "trx;logfilename=$path/test-reports.trx"
 
-      - run: |
+      - if: ${{ always() }}
+        run: |
           path="${{ steps.test.outputs.path }}"
           [ -f "$path/test-reports.trx" ] && \
             dotnet tool install --global --prerelease LiquidTestReports.Cli && \
