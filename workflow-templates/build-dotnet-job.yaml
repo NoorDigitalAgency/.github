@@ -41,9 +41,9 @@ jobs:
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
-      - run: |
-          # Tip: Add extra nuget sources like 'dotnet nuget add source https://www.myget.org/F/cachemanager/api/v3/index.json -n myget'
-          dotnet publish -c Release -r ubuntu-x64 -o outputs --self-contained -p:InformationalVersion=${{ env.RELEASE_VERSION }} ./project.csproj # TODO: Correct the path to the project file
+      # TODO: Correct the path to the project file
+      # TIP: Add extra nuget sources like 'dotnet nuget add source https://www.myget.org/F/cachemanager/api/v3/index.json -n myget'
+      - run: dotnet publish -c Release -r ubuntu-x64 -o outputs --self-contained -p:InformationalVersion=${{ env.RELEASE_VERSION }} ./project.csproj
 
       - uses: actions/upload-artifact@v3
         with:
