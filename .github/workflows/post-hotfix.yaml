@@ -25,8 +25,8 @@ jobs:
                 const body = '**Merge Back** pull request **(develop🠔${{ inputs.hotfix_branch }})** for **hotfix** release version **${{ env.RELEASE_VERSION }}**.';
                 await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, base: 'develop', head: '${{ inputs.hotfix_branch }}', title, body });
               } catch (error) {
-                startGroup('Error');
+                core.startGroup('Error');
                 core.debug(`${inspect(error, { depth: 5 })}`);
-                endGroup();
+                core.endGroup();
                 core.warning('Failed to create merge-back pull request.');
               }
