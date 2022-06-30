@@ -57,9 +57,9 @@ jobs:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
       # TODO: If needed, change the 'cd .' command to either where the solution is located or where the tests project is located
+      # TIP: Add extra nuget sources like 'dotnet nuget add source https://www.myget.org/F/cachemanager/api/v3/index.json -n myget'
       - id: test
         run: |
-          # Tip: Add extra nuget sources like 'dotnet nuget add source https://www.myget.org/F/cachemanager/api/v3/index.json -n myget'
           cd .
           path="$(pwd)/test-results" && echo "::set-output name=path::$path"
           dotnet test --logger "trx;logfilename=$path/test-reports.trx"
