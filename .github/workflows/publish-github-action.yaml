@@ -7,9 +7,6 @@ on:
         description: Branch to checkout
         type: string
         default: 'main'
-    secrets:
-      token:
-        required: false
 
 jobs:
   publish:
@@ -19,7 +16,7 @@ jobs:
       with:
         ref: ${{ inputs.branch }}
         fetch-depth: 0
-        token: ${{ secrets.token || github.token }}
+        token: ${{ github.token || secrets.GITHUB_TOKEN }}
     - uses: actions/setup-node@v3
       with:
         node-version: 16.x
@@ -28,4 +25,6 @@ jobs:
         npm run all
         git config --global user.name "Noor's GitHub Bot"
         git config --global user.email "noorgithubbot@github"
-        git diff-index --quiet HEAD || (git commit -a -m"Automated build and publish by Noor's GitHub Bot" --allow-empty && git push -f)
+        git add -A
+        git commit -m "Automated build and publish"
+        git push
