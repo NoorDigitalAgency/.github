@@ -11,6 +11,14 @@ on:
         description: Path to the buildable C# project referencing the migrations assembly
         type: string
         default: .
+      dotnet:
+        description: The dotnet version to be installed
+        type: string
+        default: 6.0.x
+      bundle:
+        description: The dotnet-ef version to be installed
+        type: string
+        default: 6.0.*
     secrets:
       connection-string:
         description: Database connection string
@@ -26,8 +34,9 @@ jobs:
           ref: ${{ inputs.reference }}
       - uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '6.0.x'
-      - run: dotnet tool install --global dotnet-ef
+          dotnet-version: ${{ inputs.dotnet }}
+      - run: dotnet new tool-manifest
+      - run: dotnet tool install --global dotnet-ef --version "${{ inputs.bundle }}"
       - run: dotnet ef migrations bundle --project "${{ inputs.project-path }}"
       - run: chmod +x ./efbundle
       - run: ./efbundle --connection "${{ secrets.connection-string }}"
