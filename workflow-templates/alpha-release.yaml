@@ -36,15 +36,12 @@ jobs:
       stage: alpha
     secrets: inherit
 
-  migrate-database:
+  migrate:
     name: Migrate Database
     needs: [build,test]
-    uses: NoorDigitalAgency/.github/.github/workflows/deploy.yaml@main
+    uses: NoorDigitalAgency/.github/.github/workflows/ef-migrations.yaml@main
     with:
-      reference: deployment-artifact
-      stage: alpha
-      resource_namespace: default # TODO: Update if needed
-      # TODO: Add "resource_type: deployment" if needed otherwise remove this TODO (Defaults to daemonset)
+      project: ./Project/Project.csproj # TODO: Update this path to the project containing code for DbContext
     secrets:
       connection-string: ${{ secrets.SQL_CONNECTION_STRING }}
 
