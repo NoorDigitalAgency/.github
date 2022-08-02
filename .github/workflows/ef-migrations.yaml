@@ -7,10 +7,10 @@ on:
         description: Git reference
         type: string
         required: true
-      project-path:
+      project:
         description: Path to the buildable C# project referencing the migrations assembly
         type: string
-        required: true
+        default: .
     secrets:
       connection-string:
         description: Database connection string
@@ -28,6 +28,6 @@ jobs:
         with:
           dotnet-version: '6.0.x'
       - run: dotnet tool install --global dotnet-ef
-      - run: dotnet ef migrations bundle --verbose --project "${{ inputs.project-path }}"
-      - run: chmod +x ./bundle
-      - run: ./bundle --connection "${{ secrets.connection-string }}"
+      - run: dotnet ef migrations bundle --project "${{ inputs.project-path }}"
+      - run: chmod +x ./efbundle
+      - run: ./efbundle --connection "${{ secrets.connection-string }}"
