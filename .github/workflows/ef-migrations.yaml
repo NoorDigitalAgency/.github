@@ -3,10 +3,6 @@ name: Entity Framework Migrations
 on:
   workflow_call:
     inputs:
-      reference:
-        description: Git reference
-        type: string
-        required: true
       project:
         description: Path to the buildable C# project referencing the migrations assembly
         type: string
@@ -28,15 +24,18 @@ jobs:
   migrate:
     runs-on: ubuntu-latest
     steps:
+      - uses: NoorDigitalAgency/release-lookup@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ inputs.reference }}
+          ref: ${{ env.RELEASE_REFERENCE }}
       - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ inputs.dotnet }}
       - run: dotnet new tool-manifest
       - run: dotnet tool install --global dotnet-ef --version "${{ inputs.bundle }}"
-      - run: dotnet ef migrations bundle --project "${{ inputs.project-path }}"
+      - run: dotnet ef migrations bundle --project "${{ inputs.project }}"
       - run: chmod +x ./efbundle
       - run: ./efbundle --connection "${{ secrets.connection-string }}"
