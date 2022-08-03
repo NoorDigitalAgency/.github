@@ -33,8 +33,7 @@ jobs:
     needs: [build]
     uses: NoorDigitalAgency/.github/.github/workflows/ef-migrations.yaml@main
     with:
-      project: ./Project/Project.csproj # TODO: Update this path to the project containing code for DbContext
-      arguments: --startup-project DbContextName # TODO: Remove if not needed or update to pass in the extra arguments needed for the bundle command
+      arguments: --project ./Project/Project.csproj # TODO: Update to pass in the arguments needed for the bundle command
     secrets:
       connection_string: ${{ secrets.SQL_CONNECTION_STRING }} # TODO: Update this to refer to the intended connection string secret
 
