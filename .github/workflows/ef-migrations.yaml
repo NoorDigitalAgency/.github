@@ -22,6 +22,7 @@ on:
 
 jobs:
   migrate:
+    name: Migrate
     runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
