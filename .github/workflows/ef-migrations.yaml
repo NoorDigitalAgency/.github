@@ -16,7 +16,7 @@ on:
         type: string
         default: 6.0.*
     secrets:
-      connection-string:
+      connection_string:
         description: Database connection string
         required: true
 
@@ -38,4 +38,4 @@ jobs:
       - run: dotnet tool install --global dotnet-ef --version "${{ inputs.bundle }}"
       - run: dotnet ef migrations bundle --project "${{ inputs.project }}"
       - run: chmod +x ./efbundle
-      - run: ./efbundle --connection "${{ secrets.connection-string }}"
+      - run: ./efbundle --connection "${{ secrets.connection_string }}"
