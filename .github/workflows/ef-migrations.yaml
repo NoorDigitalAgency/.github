@@ -15,6 +15,10 @@ on:
         description: The dotnet-ef version to be installed
         type: string
         default: 6.0.*
+      arguments:
+        description: Extra arguments to be passed to the bundle command
+        type: string
+        default: ''
     secrets:
       connection_string:
         description: Database connection string
@@ -37,6 +41,6 @@ jobs:
           dotnet-version: ${{ inputs.dotnet }}
       - run: dotnet new tool-manifest
       - run: dotnet tool install --global dotnet-ef --version "${{ inputs.bundle }}"
-      - run: dotnet ef migrations bundle --project "${{ inputs.project }}"
+      - run: dotnet ef migrations bundle --project "${{ inputs.project }}" ${{ inputs.arguments }}
       - run: chmod +x ./efbundle
       - run: ./efbundle --connection "${{ secrets.connection_string }}"
