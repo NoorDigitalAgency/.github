@@ -36,9 +36,18 @@ jobs:
       stage: alpha
     secrets: inherit
 
+  migrate:
+    name: Migrate Database
+    needs: [build,test]
+    uses: NoorDigitalAgency/.github/.github/workflows/ef-migrations.yaml@main
+    with:
+      project: ./Project/Project.csproj # TODO: Update this path to the project containing code for DbContext
+    secrets:
+      connection_string: ${{ secrets.SQL_CONNECTION_STRING }} # TODO: Update this to refer to the intended connection string secret
+
   deploy:
     name: Deploy
-    needs: [build,test]
+    needs: [migrate]
     uses: NoorDigitalAgency/.github/.github/workflows/deploy.yaml@main
     with:
       deployment_folder_artifact: deployment-artifact
@@ -52,7 +61,7 @@ jobs:
 
   release:
     name: Release
-    needs: [build,test]
+    needs: [migrate]
     runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
