@@ -43,7 +43,7 @@ jobs:
     with:
       project: ./Project/Project.csproj # TODO: Update this path to the project containing code for DbContext
     secrets:
-      connection-string: ${{ secrets.SQL_CONNECTION_STRING }}
+      connection_string: ${{ secrets.SQL_CONNECTION_STRING }} # TODO: Update this to refer to the intended connection string secret
 
   deploy:
     name: Deploy
