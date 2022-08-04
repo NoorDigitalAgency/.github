@@ -1,14 +1,11 @@
 {
-    "name": "Production Release",
-    "description": "Production Release CI/CD starter workflow.",
+    "name": ".NET Production Release",
+    "description": ".NET Production Release CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
-        "C#",
-        "TypeScript",
-        "JavaScript"
+        "C#"
     ],
     "filePatterns": [
-        "package.json$",
         "^Dockerfile",
         ".*\\.sln$",
         ".*\\.csproj$"

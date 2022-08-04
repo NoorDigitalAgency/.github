@@ -1,6 +1,6 @@
 {
     "name": "General Test Job",
-    "description": "Test Job CI/CD starter workflow.",
+    "description": "General Test Job CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
         "C#",

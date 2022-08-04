@@ -1,14 +1,11 @@
 {
-    "name": "Alpha Release",
-    "description": "Alpha Release CI/CD starter workflow.",
+    "name": ".NET Alpha Release",
+    "description": ".NET Alpha Release CI/CD starter workflow.",
     "iconName": "release-icon",
     "categories": [
-        "C#",
-        "TypeScript",
-        "JavaScript"
+        "C#"
     ],
     "filePatterns": [
-        "package.json$",
         "^Dockerfile",
         ".*\\.sln$",
         ".*\\.csproj$"
