@@ -1,0 +1,13 @@
+{
+  "name": "Nuget Publish Job",
+  "description": "Nuget Publish Job CI/CD starter workflow.",
+  "iconName": "release-icon",
+  "categories": [
+      "C#"
+  ],
+  "filePatterns": [
+      "^Dockerfile",
+      ".*\\.sln$",
+      ".*\\.csproj$"
+  ]
+}
