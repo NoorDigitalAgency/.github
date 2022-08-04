@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       reference:
-          type: text
+          type: string
           required: false
           description: Optional Beta Version
           default: ''

@@ -1,0 +1,45 @@
+name: Nuget Publish Job
+
+on:
+  workflow_call:
+    inputs:
+      stage:
+        description: Current stage name
+        required: true
+        type: string
+
+jobs:
+  publish:
+    name: Publish Nuget
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.stage }}
+    steps:
+      - uses: NoorDigitalAgency/release-lookup@main
+        with:
+          token: ${{ secrets.PAT }}
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ env.RELEASE_REFERENCE }}
+          submodules: recursive
+          token: ${{ secrets.PAT }}
+
+      - uses: actions/setup-dotnet@v2
+        with:
+          source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
+          dotnet-version: '6.0.x'
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
+
+      - if: inputs.stage == 'alpha'
+        run: dotnet pack -c Debug -o outputs --include-source -p:Version=${{ env.RELEASE_VERSION }}
+
+      - if: inputs.stage != 'alpha'
+        run: dotnet pack -c Release -o outputs -p:Version=${{ env.RELEASE_VERSION }}
+
+      - run: |
+            for package in ./outputs/*.nupkg
+            do
+              dotnet nuget push $package --skip-duplicate --no-symbols=${{ inputs.stage == 'alpha' && 'false' || 'true' }}
+            done
+        shell: bash
