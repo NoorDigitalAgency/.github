@@ -39,11 +39,8 @@ jobs:
   migrate:
     name: Migrate Database
     needs: [build,test]
-    uses: NoorDigitalAgency/.github/.github/workflows/ef-migrations.yaml@main
-    with:
-      arguments: --project ./Project/Project.csproj # TODO: Update to pass in the arguments needed for the bundle command
-    secrets:
-      connection_string: ${{ secrets.SQL_CONNECTION_STRING }} # TODO: Update this to refer to the intended connection string secret
+    uses: .github/workflows/ef-migrations.yaml # TODO: Check to match the correct file name
+    secrets: inherit
 
   deploy:
     name: Deploy

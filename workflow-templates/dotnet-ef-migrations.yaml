@@ -1,0 +1,32 @@
+name: Entity Framework Migrations
+
+on:
+  workflow_call:
+
+jobs:
+  migrate:
+    name: Migrate Database
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/release-lookup@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ env.RELEASE_REFERENCE }}
+
+      - uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+
+      - run: dotnet new tool-manifest
+
+      - run: dotnet tool install --global dotnet-ef --version=6.0.*
+
+      - run: dotnet ef migrations bundle --project=./project/project.csproj # TODO: Update the arguments passed to the command
+
+      - run: chmod +x ./efbundle
+
+      - run: ./efbundle --connection "${{ secrets.SQL_CONNECTION_STRING }}" # TODO: Update this to refer to the intended connection string secret

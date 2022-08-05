@@ -1,0 +1,13 @@
+{
+    "name": ".NET Entity Framewor Core Migrations Bundle",
+    "description": ".NET Entity Framewor Core Migrations Bundle CI/CD starter workflow.",
+    "iconName": "release-icon",
+    "categories": [
+        "C#"
+    ],
+    "filePatterns": [
+        "^Dockerfile",
+        ".*\\.sln$",
+        ".*\\.csproj$"
+    ]
+}
