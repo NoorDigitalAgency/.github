@@ -16,7 +16,7 @@ on:
 jobs:
   pull-request:
     runs-on: ubuntu-latest
-    name: Back Merge Pull Request
+    name: Merge-Back Pull Request
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
