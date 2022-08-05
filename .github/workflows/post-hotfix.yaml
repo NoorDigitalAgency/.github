@@ -38,7 +38,7 @@ jobs:
                 core.endGroup();
                 core.warning('Failed to create merge-back pull request into develop.');
               }
-      - run: echo '${{steps.develop.outputs.results}}' >> $GITHUB_STEP_SUMMARY
+      - run: echo '${{steps.develop.outputs.result}}' >> $GITHUB_STEP_SUMMARY
       - id: release
         if: ${{ inputs.release_pull_request }}
         uses: actions/github-script@v6
@@ -58,4 +58,4 @@ jobs:
                 core.warning('Failed to create merge-back pull request into release.');
               }
       - if: ${{ inputs.release_pull_request }}
-        run: echo '${{steps.release.outputs.results}}' >> $GITHUB_STEP_SUMMARY
+        run: echo '${{steps.release.outputs.result}}' >> $GITHUB_STEP_SUMMARY
