@@ -1,4 +1,4 @@
-name: Nuget Publish Job
+name: NuGet Publish Job
 
 on:
   workflow_call:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   publish:
-    name: Publish Nuget
+    name: Publish NuGet
     runs-on: ubuntu-latest
     environment: ${{ inputs.stage }}
     steps:
@@ -32,14 +32,13 @@ jobs:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
       - if: inputs.stage == 'alpha'
-        run: dotnet pack -c Debug -o outputs --include-source -p:Version=${{ env.RELEASE_PLAIN_VERSION }}
+        run: dotnet pack -c Debug -o outputs --include-source -p:Version=${{ env.RELEASE_PLAIN_VERSION }} -p:RepositoryUrl=${{ github.event.repository.html_url }}
 
       - if: inputs.stage != 'alpha'
-        run: dotnet pack -c Release -o outputs -p:Version=${{ env.RELEASE_PLAIN_VERSION }}
+        run: dotnet pack -c Release -o outputs -p:Version=${{ env.RELEASE_PLAIN_VERSION }} -p:RepositoryUrl=${{ github.event.repository.html_url }}
 
       - run: |
             for package in ./outputs/*.nupkg
             do
-              dotnet nuget push $package --skip-duplicate --no-symbols=${{ inputs.stage == 'alpha' && 'false' || 'true' }}
+              dotnet nuget push $package --skip-duplicate --source=https://nuget.pkg.github.com/noordigitalagency/index.json --api-key=${{ secrets.PAT }}
             done
-        shell: bash

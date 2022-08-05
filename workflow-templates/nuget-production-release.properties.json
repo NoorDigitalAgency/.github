@@ -1,6 +1,6 @@
 {
-  "name": "NuGet Alpha Release",
-  "description": "NuGet Alpha Release CI/CD starter workflow.",
+  "name": "NuGet Production Release",
+  "description": "NuGet Production Release CI/CD starter workflow.",
   "iconName": "release-icon",
   "categories": [
       "C#"

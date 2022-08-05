@@ -1,6 +1,6 @@
 {
-  "name": "Nuget Publish Job",
-  "description": "Nuget Publish Job CI/CD starter workflow.",
+  "name": "NuGet Publish Job",
+  "description": "NuGet Publish Job CI/CD starter workflow.",
   "iconName": "release-icon",
   "categories": [
       "C#"

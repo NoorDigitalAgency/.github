@@ -1,4 +1,4 @@
-name: NuGet Alpha Release
+name: NuGet Beta Release
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       reference:
           type: string
           required: false
-          description: Optional Git Commit SHA
+          description: Optional Alpha Version
           default: ''
 
 jobs:
@@ -16,24 +16,16 @@ jobs:
     steps:
       - uses: NoorDigitalAgency/release-startup@main
         with:
-          stage: alpha
+          stage: beta
           reference: ${{ github.event.inputs.reference }}
           token: ${{ secrets.PAT }}
 
-  test:
-    name: Test
-    needs: [startup]
-    uses: ./.github/workflows/test-job.yaml # TODO: Check to match the correct file name
-    with:
-      stage: alpha
-    secrets: inherit
-
   publish:
     name: Publish NuGet
-    needs: [test]
+    needs: [startup]
     uses: ./.github/workflows/publish-job.yaml # TODO: Check to match the correct file name
     with:
-      stage: alpha
+      stage: beta
     secrets: inherit
 
   release:
@@ -46,7 +38,7 @@ jobs:
           token: ${{ github.token }}
       - uses: NoorDigitalAgency/release-publish@main
         with:
-          stage: alpha
+          stage: beta
           token: ${{ github.token }}
 
   mark:
