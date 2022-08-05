@@ -1,0 +1,57 @@
+name: NuGet Hotfix Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      reference:
+          type: string
+          required: true
+          description: Hotfix Branch Name
+
+jobs:
+  startup:
+    name: Startup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/release-startup@main
+        with:
+          stage: production
+          reference: ${{ github.event.inputs.reference }}
+          token: ${{ secrets.BOT_PAT }}
+          hotfix: true
+
+  test:
+    name: Test
+    needs: [startup]
+    uses: ./.github/workflows/test-job.yaml # TODO: Check to match the correct file name
+    with:
+      stage: production
+    secrets: inherit
+
+  publish:
+    name: Publish NuGet
+    needs: [test]
+    uses: ./.github/workflows/publish-job.yaml # TODO: Check to match the correct file name
+    with:
+      stage: production
+    secrets: inherit
+
+  release:
+    name: Release
+    needs: [publish]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NoorDigitalAgency/release-lookup@main
+        with:
+          token: ${{ github.token }}
+      - uses: NoorDigitalAgency/release-publish@main
+        with:
+          stage: production
+          token: ${{ github.token }}
+
+  post-hotfox:
+    name: Post Hotfix
+    needs: [deploy]
+    uses: NoorDigitalAgency/.github/.github/workflows/post-hotfix.yaml@main
+    with:
+      hotfix_branch: ${{ github.event.inputs.reference }}
