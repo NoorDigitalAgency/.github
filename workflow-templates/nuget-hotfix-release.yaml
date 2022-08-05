@@ -51,7 +51,7 @@ jobs:
 
   post-hotfox:
     name: Post Hotfix
-    needs: [deploy]
+    needs: [release]
     uses: NoorDigitalAgency/.github/.github/workflows/post-hotfix.yaml@main
     with:
       hotfix_branch: ${{ github.event.inputs.reference }}
