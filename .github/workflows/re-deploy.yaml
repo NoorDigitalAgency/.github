@@ -10,14 +10,17 @@ on:
         description: Kubernetes Resource Type
         type: string
         default: daemonset
+        required: false
       resource_namespace:
         description: Kubernetes Resource Namespace
         type: string
         default: noor
+        required: false
       kubectl_version:
         description: Kubectl Version
         type: string
         default: v1.21.11
+        required: false
       environment:
         description: Execution environment
         type: string

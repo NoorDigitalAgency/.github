@@ -14,14 +14,17 @@ on:
         description: Kubernetes Resource Type
         type: string
         default: daemonset
+        required: false
       resource_namespace:
         description: Kubernetes Resource Namespace
         type: string
         default: default
+        required: false
       kubectl_version:
         description: Kubectl Version
         type: string
         default: v1.21.11
+        required: false
     secrets:
       dockerhub_username:
         description: Docker Hub Username

@@ -7,6 +7,7 @@ on:
         description: Close Issues on Merge to Production
         type: boolean
         default: true
+        required: false
     secrets:
       token:
         description: Token
