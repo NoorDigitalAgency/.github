@@ -14,7 +14,7 @@ jobs:
 
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
           ref: ${{ env.RELEASE_REFERENCE }}
 
       - uses: actions/setup-dotnet@v2
