@@ -1,0 +1,54 @@
+name: .NET Build Job
+
+on:
+  workflow_call:
+    inputs:
+      stage:
+        description: Current stage name
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.stage }}
+    steps:
+      - if: github.event_name != 'pull_request'
+        uses: NoorDigitalAgency/release-lookup@main
+        with:
+          token: ${{ secrets.PAT }}
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event_name != 'pull_request' && env.RELEASE_REFERENCE || github.event.pull_request.head.ref }}
+          submodules: recursive
+          token: ${{ secrets.PAT }}
+
+      - uses: actions/setup-dotnet@v2
+        with:
+          source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
+          dotnet-version: '6.0.x'
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
+
+      - uses: dopplerhq/cli-action@v1
+
+      # TODO: Change the 'cd .' command to point to the directory where the settings template files exist
+      - run: |
+          cd .
+          doppler secrets substitute appsettings.json.tmpl --output appsettings.json
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+
+      # TODO: Correct the path to the project file
+      - run: dotnet publish -c Release -r ubuntu-x64 -o outputs --self-contained -p:InformationalVersion=${{ env.RELEASE_VERSION }} ./project.csproj
+
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-artifact
+          retention-days: 2
+          path: |
+            Dockerfile
+            outputs

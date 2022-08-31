@@ -1,0 +1,12 @@
+{
+  "name": "JavaScript Build Job",
+  "description": "JavaScript Build Job CI/CD starter workflow.",
+  "iconName": "release-icon",
+  "categories": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "filePatterns": [
+    "package.json$"
+  ]
+}
