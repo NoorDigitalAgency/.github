@@ -1,0 +1,12 @@
+{
+    "name": "JavaScript Hotfix Release",
+    "description": "JavaScript Hotfix Release CI/CD starter workflow.",
+    "iconName": "release-icon",
+    "categories": [
+        "JavaScript",
+        "TypeScript"
+    ],
+    "filePatterns": [
+      "package.json$"
+    ]
+}

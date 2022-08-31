@@ -1,0 +1,12 @@
+{
+    "name": "JavaScript Beta Release",
+    "description": "JavaScript Beta Release CI/CD starter workflow.",
+    "iconName": "release-icon",
+    "categories": [
+        "JavaScript",
+        "TypeScript"
+    ],
+    "filePatterns": [
+        "package.json$"
+    ]
+}
