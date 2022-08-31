@@ -70,4 +70,4 @@ jobs:
             dotnet tool install --global --prerelease LiquidTestReports.Cli && \
             liquid --inputs "File=$path/test-reports.trx;Format=Trx" --output-file "$path/test-reports.md" && \
             cat "$path/test-reports.md" >> $GITHUB_STEP_SUMMARY || \
-            echo "::warning::No Unit Tests where found in the project!"
+            echo "::warning::No Unit Tests were found in the project!"

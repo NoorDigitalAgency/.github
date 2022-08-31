@@ -1,4 +1,4 @@
-name: .NET Test Job
+name: JavaScript Test Job
 
 on:
   workflow_call:
@@ -13,18 +13,6 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     environment: ${{ inputs.stage }}
-
-    # Note: Local SQL Server for DB tests
-    services:
-      sql-server:
-        image: noorteam/mssql-docker:2019-focal
-        ports:
-          - 1433:1433
-        env:
-          DATABASE_USERNAME: user
-          DATABASE_NAMES: database # Note: You can add multiple databases like 'postnoor, golight, lynx'
-        options: --health-cmd sqlserver_isready
-
     steps:
       - if: github.event_name != 'pull_request'
         uses: NoorDigitalAgency/release-lookup@main
@@ -37,37 +25,21 @@ jobs:
           submodules: recursive
           token: ${{ secrets.PAT }}
 
-      # NOTE: dotnet version 5.0.x is required for the markdown report generator
-      - uses: actions/setup-dotnet@v2
+      - uses: actions/setup-node@v3
         with:
-          source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
-          dotnet-version: |
-            6.0.x
-            5.0.x
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
+          node-version: '16' # TODO: Set to the correct version
 
-      - uses: dopplerhq/cli-action@v1
-
-      # TODO: Change the 'cd .' command to point to the directory where the appsettings files exist
       - run: |
-          cd .
-          doppler secrets substitute appsettings.json.tmpl --output appsettings.json
+          echo -e "@noordigitalagency:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=$TOKEN\n" > ~/.npmrc
+          npm install
         env:
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+          TOKEN: ${{ secrets.PAT }}
 
-      # TODO: If needed, change the 'cd .' command to either where the solution is located or where the tests project is located
-      - id: test
-        run: |
-          cd .
-          path="$(pwd)/test-results" && echo "::set-output name=path::$path"
-          dotnet test --logger "trx;logfilename=$path/test-reports.trx"
+      - run: npm run test
 
+       # TODO: Correct the report file path
       - if: ${{ always() }}
         run: |
-          path="${{ steps.test.outputs.path }}"
-          [ -f "$path/test-reports.trx" ] && \
-            dotnet tool install --global --prerelease LiquidTestReports.Cli && \
-            liquid --inputs "File=$path/test-reports.trx;Format=Trx" --output-file "$path/test-reports.md" && \
-            cat "$path/test-reports.md" >> $GITHUB_STEP_SUMMARY || \
-            echo "::warning::No Unit Tests where found in the project!"
+          [ -f "test-reports.html" ] && \
+            cat "test-reports.html" >> $GITHUB_STEP_SUMMARY || \
+            echo "::warning::No Unit Test results were found in the project!"
