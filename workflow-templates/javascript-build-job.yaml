@@ -1,4 +1,4 @@
-name: .NET Build Job
+name: JavaScript Build Job
 
 on:
   workflow_call:
@@ -25,24 +25,18 @@ jobs:
           submodules: recursive
           token: ${{ secrets.PAT }}
 
-      - uses: actions/setup-dotnet@v2
+      - uses: actions/setup-node@v3
         with:
-          source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
-          dotnet-version: '6.0.x'
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
+          node-version: '16' # TODO: Set to the correct version
 
-      - uses: dopplerhq/cli-action@v1
-
-      # TODO: Change the 'cd .' command to point to the directory where the settings template files exist
       - run: |
-          cd .
-          doppler secrets substitute appsettings.json.tmpl --output appsettings.json
+          echo -e "@noordigitalagency:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=$TOKEN\n" > ~/.npmrc
+          npm install
+          [ '${{github.event_name}}' != 'pull_request' ] && npm version ${{ env.RELEASE_VERSION }} --no-commit-hooks --no-git-tag-version
         env:
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+          TOKEN: ${{ secrets.PAT }}
 
-      # TODO: Correct the path to the project file
-      - run: dotnet publish -c Release -r ubuntu-x64 -o outputs --self-contained -p:InformationalVersion=${{ env.RELEASE_VERSION }} ./project.csproj
+      - run: npm run build -- --mode $([ '${{ inputs.stage }}' == 'alpha' ] && echo 'develop' || ([ '${{ inputs.stage }}' == 'beta' ] && echo 'release' || echo 'production'))
 
       - if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v3
@@ -51,4 +45,4 @@ jobs:
           retention-days: 2
           path: |
             Dockerfile
-            outputs
+            dist
