@@ -1,4 +1,4 @@
-name: NuGet Beta Release
+name: Package Beta Release
 
 on:
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
           token: ${{ secrets.PAT }}
 
   publish:
-    name: Publish NuGet
+    name: Publish
     needs: [startup]
     uses: ./.github/workflows/publish-job.yaml # TODO: Check to match the correct file name
     with:

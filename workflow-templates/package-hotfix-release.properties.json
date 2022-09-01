@@ -1,13 +1,15 @@
 {
-  "name": "NuGet Hotfix Release",
-  "description": "NuGet Hotfix Release CI/CD starter workflow.",
+  "name": "Package Hotfix Release",
+  "description": "Package Hotfix Release CI/CD starter workflow.",
   "iconName": "release-icon",
   "categories": [
-      "C#"
+    "C#",
+    "JavaScript",
+    "TypeScript"
   ],
   "filePatterns": [
-      "^Dockerfile",
-      ".*\\.sln$",
-      ".*\\.csproj$"
+    "package.json$",
+    ".*\\.sln$",
+    ".*\\.csproj$"
   ]
 }

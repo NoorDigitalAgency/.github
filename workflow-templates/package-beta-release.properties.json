@@ -1,13 +1,15 @@
 {
-  "name": "NuGet Beta Release",
-  "description": "NuGet Beta Release CI/CD starter workflow.",
+  "name": "Package Beta Release",
+  "description": "Package Beta Release CI/CD starter workflow.",
   "iconName": "release-icon",
   "categories": [
-      "C#"
+    "C#",
+    "JavaScript",
+    "TypeScript"
   ],
   "filePatterns": [
-      "^Dockerfile",
-      ".*\\.sln$",
-      ".*\\.csproj$"
+    "package.json$",
+    ".*\\.sln$",
+    ".*\\.csproj$"
   ]
 }
