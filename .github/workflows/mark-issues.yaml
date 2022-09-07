@@ -8,6 +8,11 @@ on:
         type: boolean
         default: true
         required: false
+      artifact-name:
+        description: Release Artifact Name
+        type: string
+        default: release-startup-outputs
+        required: false
 
 jobs:
   mark:
@@ -16,7 +21,8 @@ jobs:
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
-          token: ${{ github.PAT }}
+          token: ${{ secrets.PAT }}
+          artifact_name: ${{ inputs.artifact-name }}
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
