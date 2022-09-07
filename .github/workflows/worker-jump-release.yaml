@@ -35,12 +35,12 @@ jobs:
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
-          token: ${{ github.PAT }}
+          token: ${{ github.token }}
           artifact_name: dotnet-worker-jump-release-artifact
       - uses: NoorDigitalAgency/release-publish@main
         with:
           stage: beta
-          token: ${{ github.PAT }}
+          token: ${{ github.token }}
 
   mark:
     if: inputs.worker == true
