@@ -10,7 +10,6 @@ on:
           default: ''
 
 jobs:
-
   jump:
     name: Jump
     uses: NoorDigitalAgency/.github/.github/workflows/worker-jump-release.yaml@main
