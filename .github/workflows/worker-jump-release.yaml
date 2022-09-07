@@ -42,6 +42,7 @@ jobs:
         with:
           stage: beta
           token: ${{ github.token }}
+          artifact_name: dotnet-worker-jump-release-artifact
 
   mark:
     if: inputs.worker == true
