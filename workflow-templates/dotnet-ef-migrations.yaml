@@ -2,11 +2,17 @@ name: Entity Framework Migrations
 
 on:
   workflow_call:
+    inputs:
+      stage:
+        description: Current stage name
+        required: true
+        type: string
 
 jobs:
   migrate:
     name: Migrate Database
     runs-on: ubuntu-latest
+    environment: ${{ inputs.stage }}
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
@@ -14,19 +20,41 @@ jobs:
 
       - uses: actions/checkout@v3
         with:
+          submodules: recursive
           token: ${{ secrets.PAT }}
           ref: ${{ env.RELEASE_REFERENCE }}
 
       - uses: actions/setup-dotnet@v2
         with:
+          source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
           dotnet-version: 6.0.x
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
-      - run: dotnet new tool-manifest
+      - uses: dopplerhq/cli-action@v1
 
-      - run: dotnet tool install --global dotnet-ef --version=6.0.*
+      # TODO: Modify this to generate the absent, sensitive files required by the build process
+      - run: |
+          doppler secrets substitute ./data-project/datasettings.json.tmpl --output ./data-project/datasettings.json
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
-      - run: dotnet ef migrations bundle --project=./project/project.csproj # TODO: Update the arguments passed to the command
+      - run: |
+          dotnet new tool-manifest
+          dotnet tool install --global dotnet-ef --version 6.0.*
 
-      - run: chmod +x ./efbundle
+      - run: dotnet ef migrations bundle --project ./project # TODO: Update the arguments passed to the command
+
+      - run: |
+          chmod +x ./efbundle && \
+          [ '${{ secrets.OPENVPN_CONFIG }}' != '' ] && [ '${{ secrets.OPENVPN_USERNAME }}' != '' ] && [ '${{ secrets.OPENVPN_PASSWORD }}' != '' ] && \
+          sudo apt install apt-transport-https && sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub && sudo apt-key add openvpn-repo-pkg-key.pub && \
+          sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-$(lsb_release -c -s).list && \
+          sudo apt update && sudo apt install openvpn3 && echo ${{ secrets.OPENVPN_CONFIG }} | base64 --decode > config.ovpn && \
+          echo '${{ secrets.OPENVPN_USERNAME }}' > config.login && echo '${{ secrets.OPENVPN_PASSWORD }}' >> config.login && \
+          openvpn3 session-start --config config.ovpn && echo "TUNNEL_CONNECTION=established" >> $GITHUB_ENV
 
       - run: ./efbundle --connection "${{ secrets.SQL_CONNECTION_STRING }}" # TODO: Update this to refer to the intended connection string secret
+
+      - if: ${{ always() }}
+        run: echo && [ '${{ env.TUNNEL_CONNECTION }}' == 'established' ] && openvpn3 session-manage --disconnect --config config.ovpn
