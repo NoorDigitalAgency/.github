@@ -47,5 +47,4 @@ jobs:
     name: Mark Issues
     needs: [release]
     uses: NoorDigitalAgency/.github/.github/workflows/mark-issues.yaml@main
-    secrets:
-      token: ${{ secrets.PAT }}
+    secrets: inherit
