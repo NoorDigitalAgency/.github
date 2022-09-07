@@ -25,16 +25,6 @@ on:
         description: Execution environment
         type: string
         required: true
-    secrets:
-      dockerhub_username:
-        description: Docker Hub Username
-        required: true
-      dockerhub_token:
-        description: Docker Hub Token
-        required: true
-      kube_config:
-        description: Base64 Encoded Kube Config File
-        required: true
 
 jobs:
   deploy:
@@ -70,16 +60,27 @@ jobs:
       - name: Docker Hub Login
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.dockerhub_username }}
-          password: ${{ secrets.dockerhub_token }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DUCKERHUB_TOKEN }}
+
+      - run: |
+          [ '${{ secrets.OPENVPN_CONFIG }}' != '' ] && [ '${{ secrets.OPENVPN_USERNAME }}' != '' ] && [ '${{ secrets.OPENVPN_PASSWORD }}' != '' ] && \
+          sudo apt install apt-transport-https && sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub && sudo apt-key add openvpn-repo-pkg-key.pub && \
+          sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-$(lsb_release -c -s).list && \
+          sudo apt update && sudo apt install openvpn3 && echo ${{ secrets.OPENVPN_CONFIG }} | base64 --decode > config.ovpn && \
+          echo '${{ secrets.OPENVPN_USERNAME }}' > config.login && echo '${{ secrets.OPENVPN_PASSWORD }}' >> config.login && \
+          openvpn3 session-start --config config.ovpn && echo "TUNNEL_CONNECTION=established" >> $GITHUB_ENV
 
       - name: Kubernetes Resource Update
         run: |
           mkdir -p ~/.kube
-          echo ${{ secrets.kube_config }} | base64 --decode > ~/.kube/config
+          echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ~/.kube/config
           curl -LO https://dl.k8s.io/release/${{ inputs.kubectl_version }}/bin/linux/amd64/kubectl
           chmod +x ./kubectl
           docker pull ${{ fromJson(steps.analyzing.outputs.result).version }}
           docker tag ${{ fromJson(steps.analyzing.outputs.result).version }} ${{ fromJson(steps.analyzing.outputs.result).latest }}
           docker push ${{ fromJson(steps.analyzing.outputs.result).latest }}
           ./kubectl rollout restart ${{ fromJson(steps.analyzing.outputs.result).resource }} --namespace=${{ inputs.resource_namespace }}
+
+      - if: ${{ always() }}
+        run: echo && [ '${{ env.TUNNEL_CONNECTION }}' == 'established' ] && openvpn3 session-manage --disconnect --config config.ovpn
