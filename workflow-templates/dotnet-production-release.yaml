@@ -10,8 +10,17 @@ on:
           default: ''
 
 jobs:
+
+  jump:
+    name: Jump
+    uses: NoorDigitalAgency/.github/.github/workflows/worker-jump-release.yaml@main
+    with:
+      worker: false # TODO: Set to true if a worker
+    secrets: inherit
+
   startup:
     name: Startup
+    needs: [jump]
     runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/release-startup@main
@@ -79,5 +88,4 @@ jobs:
     name: Mark Issues
     needs: [deploy,release]
     uses: NoorDigitalAgency/.github/.github/workflows/mark-issues.yaml@main
-    secrets:
-      token: ${{ secrets.PAT }}
+    secrets: inherit

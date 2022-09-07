@@ -8,10 +8,6 @@ on:
         type: boolean
         default: true
         required: false
-    secrets:
-      token:
-        description: Token
-        required: true
 
 jobs:
   mark:
@@ -20,15 +16,15 @@ jobs:
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
-          token: ${{ github.token }}
+          token: ${{ github.PAT }}
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.token }}
+          token: ${{ secrets.PAT }}
           fetch-depth: 0
           ref: ${{ env.RELEASE_VERSION }}
       - uses: NoorDigitalAgency/issue-marker@main
         with:
-          token: ${{ secrets.token }}
+          token: ${{ secrets.PAT }}
           reference: ${{ env.RELEASE_REFERENCE }}
           version: ${{ env.RELEASE_VERSION }}
           previous-version: ${{ env.RELEASE_PREVIOUS_VERSION }}

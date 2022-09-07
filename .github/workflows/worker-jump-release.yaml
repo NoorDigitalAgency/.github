@@ -1,56 +1,51 @@
-name: Package Alpha Release
+name: Worker Jump Release
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      reference:
-        type: string
-        required: false
-        description: Optional Git Commit SHA
-        default: ""
+      worker:
+        description: The caller is a worker
+        type: boolean
+        required: true
 
 jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - run: "inputs.worker: ${{ inputs.worker }}"
+
   startup:
+    if: inputs.worker == true
     name: Startup
     runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/release-startup@main
         with:
-          stage: alpha
+          stage: beta
           reference: ${{ github.event.inputs.reference }}
           token: ${{ secrets.PAT }}
-
-  test:
-    name: Test
-    needs: [startup]
-    uses: ./.github/workflows/test-job.yaml # TODO: Check to match the correct file name
-    with:
-      stage: alpha
-    secrets: inherit
-
-  publish:
-    name: Publish
-    needs: [test]
-    uses: ./.github/workflows/publish-job.yaml # TODO: Check to match the correct file name
-    with:
-      stage: alpha
-    secrets: inherit
+          artifact_name: dotnet-worker-jump-release-artifact
 
   release:
+    if: inputs.worker == true
     name: Release
-    needs: [publish]
+    needs: [startup]
     runs-on: ubuntu-latest
     steps:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
+          artifact_name: dotnet-worker-jump-release-artifact
       - uses: NoorDigitalAgency/release-publish@main
         with:
-          stage: alpha
+          stage: beta
           token: ${{ github.token }}
 
   mark:
+    if: inputs.worker == true
     name: Mark Issues
     needs: [release]
     uses: NoorDigitalAgency/.github/.github/workflows/mark-issues.yaml@main
-    secrets: inherit
+    secrets:
+      token: ${{ secrets.PAT }}
