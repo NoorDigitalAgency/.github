@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "inputs.worker: ${{ inputs.worker }}"
+          echo "Worker: ${{ inputs.worker }}"
 
   startup:
     if: inputs.worker == true
