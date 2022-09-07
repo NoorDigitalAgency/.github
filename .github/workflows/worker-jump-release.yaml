@@ -50,4 +50,6 @@ jobs:
     name: Mark Issues
     needs: [release]
     uses: NoorDigitalAgency/.github/.github/workflows/mark-issues.yaml@main
+    with:
+      artifact-name: dotnet-worker-jump-release-artifact
     secrets: inherit
