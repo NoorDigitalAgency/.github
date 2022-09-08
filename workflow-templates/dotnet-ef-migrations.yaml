@@ -54,12 +54,12 @@ jobs:
           OPENVPN_PASSWORD: ${{ secrets.OPENVPN_PASSWORD }}
         run: |
           [[ ! -z "$OPENVPN_CONFIG" ]] && [[ ! -z "$OPENVPN_USERNAME" ]] && [[ ! -z "$OPENVPN_PASSWORD" ]] && \
-          sudo apt install apt-transport-https && sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub && sudo apt-key add openvpn-repo-pkg-key.pub && \
-          sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-$(lsb_release -c -s).list && \
+          sudo apt install apt-transport-https && wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub && sudo apt-key add openvpn-repo-pkg-key.pub && \
+          sudo wget -O /etc/apt/sources.list.d/openvpn3.list "https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-$(lsb_release -c -s).list" && \
           sudo apt update && sudo apt install openvpn3 && echo "$OPENVPN_CONFIG" > config.ovpn && echo "$OPENVPN_USERNAME" > config.login && echo "$OPENVPN_PASSWORD" >> config.login && \
-          openvpn3 session-start --config config.ovpn && echo "TUNNEL_CONNECTION=established" >> $GITHUB_ENV
+          openvpn3 session-start --config config.ovpn && echo "TUNNEL_CONNECTION=established" >> $GITHUB_ENV || echo
 
       - run: ./efbundle --connection "${{ secrets.SQL_CONNECTION_STRING }}" # TODO: Update this to refer to the intended connection string secret
 
       - if: ${{ always() }}
-        run: echo && [ '${{ env.TUNNEL_CONNECTION }}' == 'established' ] && openvpn3 session-manage --disconnect --config config.ovpn
+        run: echo && [ '${{ env.TUNNEL_CONNECTION }}' == 'established' ] && openvpn3 session-manage --disconnect --config config.ovpn || echo
