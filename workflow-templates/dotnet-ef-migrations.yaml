@@ -44,12 +44,15 @@ jobs:
 
       - run: dotnet ef migrations bundle --project ./project # TODO: Update the arguments passed to the command
 
+      - run: |
+          chmod +x ./efbundle
+          sudo sed -i '/\[\s*new_oids\s*\]/i openssl_conf = openssl_init\n[openssl_init]\nssl_conf = ssl_sect\n[ssl_sect]\nsystem_default = system_default_sect\n[system_default_sect]\nMinProtocol = TLSv1.2\nCipherString = DEFAULT@SECLEVEL=2\n' /etc/ssl/openssl.cnf
+
       - env:
           OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
           OPENVPN_USERNAME: ${{ secrets.OPENVPN_USERNAME }}
           OPENVPN_PASSWORD: ${{ secrets.OPENVPN_PASSWORD }}
         run: |
-          chmod +x ./efbundle
           [[ ! -z "$OPENVPN_CONFIG" ]] && [[ ! -z "$OPENVPN_USERNAME" ]] && [[ ! -z "$OPENVPN_PASSWORD" ]] && \
           sudo apt install apt-transport-https && sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub && sudo apt-key add openvpn-repo-pkg-key.pub && \
           sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-$(lsb_release -c -s).list && \
