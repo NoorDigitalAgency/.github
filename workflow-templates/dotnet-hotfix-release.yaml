@@ -40,6 +40,8 @@ jobs:
     name: Migrate Database
     needs: [build,test]
     uses: .github/workflows/ef-migrations.yaml # TODO: Check to match the correct file name
+    with:
+      stage: production
     secrets: inherit
 
   deploy:
