@@ -68,18 +68,23 @@ jobs:
           tags: ${{ fromJson(steps.analyzing.outputs.result).tags }}
           build-args: E20R_ENV=${{ inputs.stage }}
 
-      - run: |
-          [ '${{ secrets.OPENVPN_CONFIG }}' != '' ] && [ '${{ secrets.OPENVPN_USERNAME }}' != '' ] && [ '${{ secrets.OPENVPN_PASSWORD }}' != '' ] && \
+      - env:
+          OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
+          OPENVPN_USERNAME: ${{ secrets.OPENVPN_USERNAME }}
+          OPENVPN_PASSWORD: ${{ secrets.OPENVPN_PASSWORD }}
+        run: |
+          [[ ! -z "$OPENVPN_CONFIG" ]] && [[ ! -z "$OPENVPN_USERNAME" ]] && [[ ! -z "$OPENVPN_PASSWORD" ]] && \
           sudo apt install apt-transport-https && sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub && sudo apt-key add openvpn-repo-pkg-key.pub && \
           sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-$(lsb_release -c -s).list && \
-          sudo apt update && sudo apt install openvpn3 && echo ${{ secrets.OPENVPN_CONFIG }} | base64 --decode > config.ovpn && \
-          echo '${{ secrets.OPENVPN_USERNAME }}' > config.login && echo '${{ secrets.OPENVPN_PASSWORD }}' >> config.login && \
+          sudo apt update && sudo apt install openvpn3 && echo "$OPENVPN_CONFIG" > config.ovpn && echo "$OPENVPN_USERNAME" > config.login && echo "$OPENVPN_PASSWORD" >> config.login && \
           openvpn3 session-start --config config.ovpn && echo "TUNNEL_CONNECTION=established" >> $GITHUB_ENV
 
       - name: Kubernetes Resource Update
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         run: |
           mkdir -p ~/.kube
-          echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ~/.kube/config
+          echo "$KUBE_CONFIG" > ~/.kube/config
           curl -LO https://dl.k8s.io/release/${{ inputs.kubectl_version }}/bin/linux/amd64/kubectl
           chmod +x ./kubectl
           ./kubectl rollout restart ${{ fromJson(steps.analyzing.outputs.result).resource }} --namespace=${{ inputs.resource_namespace }}

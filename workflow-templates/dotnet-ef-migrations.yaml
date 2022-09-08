@@ -45,13 +45,16 @@ jobs:
 
       - run: dotnet ef migrations bundle --project ./project # TODO: Update the arguments passed to the command
 
-      - run: |
-          chmod +x ./efbundle && \
-          [ '${{ secrets.OPENVPN_CONFIG }}' != '' ] && [ '${{ secrets.OPENVPN_USERNAME }}' != '' ] && [ '${{ secrets.OPENVPN_PASSWORD }}' != '' ] && \
+      - env:
+          OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
+          OPENVPN_USERNAME: ${{ secrets.OPENVPN_USERNAME }}
+          OPENVPN_PASSWORD: ${{ secrets.OPENVPN_PASSWORD }}
+        run: |
+          chmod +x ./efbundle
+          [[ ! -z "$OPENVPN_CONFIG" ]] && [[ ! -z "$OPENVPN_USERNAME" ]] && [[ ! -z "$OPENVPN_PASSWORD" ]] && \
           sudo apt install apt-transport-https && sudo wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub && sudo apt-key add openvpn-repo-pkg-key.pub && \
           sudo wget -O /etc/apt/sources.list.d/openvpn3.list https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-$(lsb_release -c -s).list && \
-          sudo apt update && sudo apt install openvpn3 && echo ${{ secrets.OPENVPN_CONFIG }} | base64 --decode > config.ovpn && \
-          echo '${{ secrets.OPENVPN_USERNAME }}' > config.login && echo '${{ secrets.OPENVPN_PASSWORD }}' >> config.login && \
+          sudo apt update && sudo apt install openvpn3 && echo "$OPENVPN_CONFIG" > config.ovpn && echo "$OPENVPN_USERNAME" > config.login && echo "$OPENVPN_PASSWORD" >> config.login && \
           openvpn3 session-start --config config.ovpn && echo "TUNNEL_CONNECTION=established" >> $GITHUB_ENV
 
       - run: ./efbundle --connection "${{ secrets.SQL_CONNECTION_STRING }}" # TODO: Update this to refer to the intended connection string secret
