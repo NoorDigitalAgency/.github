@@ -31,7 +31,7 @@ jobs:
   migrate:
     name: Migrate Database
     needs: [build]
-    uses: .github/workflows/ef-migrations.yaml # TODO: Check to match the correct file name
+    uses: ./.github/workflows/ef-migrations.yaml # TODO: Check to match the correct file name
     with:
       stage: beta
     secrets: inherit
