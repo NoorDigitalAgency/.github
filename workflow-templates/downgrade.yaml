@@ -46,6 +46,6 @@ jobs:
     with:
       version: ${{ github.event.inputs.version }}
       stage: ${{ needs.version-check.stage }}
-      dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
-      kube_config: ${{ secrets.KUBE_CONFIG }}
+      resource_namespace: default # TODO: Update if needed
+      # TODO: Add "resource_type: deployment" if needed otherwise remove this TODO (Defaults to daemonset)
+    secrets: inherit
