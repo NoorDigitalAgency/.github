@@ -21,14 +21,14 @@ on:
         type: string
         default: v1.21.11
         required: false
-      environment:
-        description: Execution environment
+      stage:
+        description: Stage
         type: string
         required: true
 
 jobs:
   deploy:
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.stage }}
     runs-on: ubuntu-latest
     name: Re-deploy
     steps:
@@ -56,12 +56,6 @@ jobs:
               latest: `noorteam/${ name }:latest${ label }`,
               resource: `${ resource }/${ name }${ label }`
             };
-
-      - name: Docker Hub Login
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DUCKERHUB_TOKEN }}
 
       - env:
           OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}

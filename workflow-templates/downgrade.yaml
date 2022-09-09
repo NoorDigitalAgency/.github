@@ -13,7 +13,7 @@ jobs:
     name: Version Check
     runs-on: ubuntu-latest
     outputs:
-      environment: ${{ steps.check.outputs.result }}
+      stage: ${{ steps.check.outputs.result }}
     steps:
       - name: Chcek
         id: check
@@ -28,7 +28,7 @@ jobs:
             }
             else
             {
-              return version.includes('-alpha.') ? 'alpha-downgrade' : version.includes('-beta.') ? 'beta-downgrade' : 'production-downgrade';
+              return version.includes('-alpha.') ? 'alpha' : version.includes('-beta.') ? 'beta' : 'production';
             }
 
   downgrade:
@@ -37,7 +37,7 @@ jobs:
     uses: NoorDigitalAgency/.github/.github/workflows/downgrade.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
-      environment: ${{ needs.version-check.environment }}
+      stage: ${{ needs.version-check.stage }}
 
   re-deploy:
     name: Re-deploy
@@ -45,7 +45,7 @@ jobs:
     uses: NoorDigitalAgency/.github/.github/workflows/re-deploy.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
-      environment: ${{ needs.version-check.environment }}
+      stage: ${{ needs.version-check.stage }}
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
       kube_config: ${{ secrets.KUBE_CONFIG }}

@@ -51,7 +51,8 @@ jobs:
             const label = stage !== 'production' ? `-${ stage }` : '';
             return {
               tags: `noorteam/${ name }:${ version },noorteam/${ name }:latest${ label }`,
-              resource: `${ resource }/${ name }${ label }`
+              resource: `${ resource }/${ name }${ label }`,
+              environment: stage === 'alpha' ? 'develop' : stage === 'beta' ? 'release' : 'production'
             };
 
       - name: Docker Hub Login
@@ -66,7 +67,7 @@ jobs:
           context: .
           push: true
           tags: ${{ fromJson(steps.analyzing.outputs.result).tags }}
-          build-args: E20R_ENV=${{ inputs.stage }}
+          build-args: E20R_ENV=${{ fromJson(steps.analyzing.outputs.result).environment }}
 
       - env:
           OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
