@@ -55,7 +55,8 @@ jobs:
               await github.rest.repos.deleteRelease({ owner: context.repo.owner, repo: context.repo.repo, release_id: r.id });
             }
 
-      - run: |
+      - if: inputs.stage != 'alpha'
+        run: |
           git reset --hard ${{ inputs.version }}
           git config --global user.name "Noor's GitHub Bot"
           git config --global user.email "noorgithubbot@github"
