@@ -15,7 +15,7 @@ on:
     outputs:
       reference:
         description: The reference to be used by the caller's startup job
-        value: $ {{ jobs.jump.outputs.reference }}
+        value: ${{ jobs.jump.outputs.reference }}
 
 jobs:
   jump:
