@@ -3,53 +3,56 @@ name: Worker Jump Release
 on:
   workflow_call:
     inputs:
+      reference:
+        description: The reference set on the caller workflow call
+        type: string
+        required: true
       worker:
-        description: The caller is a worker
+        description: If the caller is a worker
         type: boolean
         required: true
 
-jobs:
-  check:
-    name: Check
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "Worker: ${{ inputs.worker }}"
+    outputs:
+      reference:
+        description: The reference to be used by the caller's startup job
+        value: $ {{ jobs.jump.outputs.reference }}
 
-  startup:
-    if: inputs.worker == true
-    name: Startup
-    needs: [check]
+jobs:
+  jump:
+    name: Jump
     runs-on: ubuntu-latest
+    outputs:
+      reference: ${{ steps.reference.outputs.reference }}
     steps:
-      - uses: NoorDigitalAgency/release-startup@main
+      - if: inputs.worker == true
+        uses: NoorDigitalAgency/release-startup@main
         with:
           stage: beta
-          reference: ${{ github.event.inputs.reference }}
+          reference: ${{ inputs.reference }}
           token: ${{ secrets.PAT }}
           artifact_name: dotnet-worker-jump-release-artifact
 
-  release:
-    if: inputs.worker == true
-    name: Release
-    needs: [startup]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: NoorDigitalAgency/release-lookup@main
-        with:
-          token: ${{ github.token }}
-          artifact_name: dotnet-worker-jump-release-artifact
-      - uses: NoorDigitalAgency/release-publish@main
+      - if: inputs.worker == true
+        uses: NoorDigitalAgency/release-publish@main
         with:
           stage: beta
-          token: ${{ github.token }}
+          token: ${{ secrets.PAT }}
           artifact_name: dotnet-worker-jump-release-artifact
 
-  mark:
-    if: inputs.worker == true
-    name: Mark Issues
-    needs: [release]
-    uses: NoorDigitalAgency/.github/.github/workflows/mark-issues.yaml@main
-    with:
-      artifact-name: dotnet-worker-jump-release-artifact
-    secrets: inherit
+      - if: inputs.worker == true
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+          fetch-depth: 0
+          ref: ${{ env.RELEASE_VERSION }}
+
+      - if: inputs.worker == true
+        uses: NoorDigitalAgency/issue-marker@main
+        with:
+          token: ${{ secrets.PAT }}
+          reference: ${{ env.RELEASE_REFERENCE }}
+          version: ${{ env.RELEASE_VERSION }}
+          previous-version: ${{ env.RELEASE_PREVIOUS_VERSION }}
+
+      - id: reference
+        run: echo "::set-output name=reference::$([ '${{ inputs.worker }}' == 'true' ] && echo '${{ env.RELEASE_VERSION }}' || echo '${{ inputs.reference }}')"

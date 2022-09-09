@@ -14,6 +14,7 @@ jobs:
     name: Jump
     uses: NoorDigitalAgency/.github/.github/workflows/worker-jump-release.yaml@main
     with:
+      reference: ${{ github.event.inputs.reference }}
       worker: false # TODO: Set to true if a worker
     secrets: inherit
 
@@ -25,7 +26,7 @@ jobs:
       - uses: NoorDigitalAgency/release-startup@main
         with:
           stage: production
-          reference: ${{ github.event.inputs.reference }}
+          reference: ${{ needs.jump.outputs.reference }}
           token: ${{ secrets.PAT }}
 
   build:
