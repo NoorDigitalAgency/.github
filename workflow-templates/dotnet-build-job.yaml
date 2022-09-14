@@ -32,14 +32,8 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
-      - uses: dopplerhq/cli-action@v1
-
       # TODO: Change the 'cd .' command to point to the directory where the settings template files exist
-      - run: |
-          cd .
-          doppler secrets substitute appsettings.json.tmpl --output appsettings.json
-        env:
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+      - run: mv ./project/appsettings.json.tmpl ./project/appsettings.json
 
       # TODO: Correct the path to the project file
       - run: dotnet publish -c Release -r ubuntu-x64 -o outputs --self-contained -p:InformationalVersion=${{ env.RELEASE_VERSION }} ./project.csproj

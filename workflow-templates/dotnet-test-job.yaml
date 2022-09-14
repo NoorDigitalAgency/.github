@@ -47,14 +47,8 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
-      - uses: dopplerhq/cli-action@v1
-
-      # TODO: Change the 'cd .' command to point to the directory where the appsettings files exist
-      - run: |
-          cd .
-          doppler secrets substitute appsettings.json.tmpl --output appsettings.json
-        env:
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+      # TODO: Modify this to point to the missing file
+      - run: mv ./project/appsettings.json.tmpl ./project/appsettings.json
 
       # TODO: If needed, change the 'cd .' command to either where the solution is located or where the tests project is located
       - id: test

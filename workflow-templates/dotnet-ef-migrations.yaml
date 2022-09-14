@@ -31,12 +31,8 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
-      - uses: dopplerhq/cli-action@v1
-
-      # TODO: Modify this to generate the absent, sensitive files required by the build process
-      - run: doppler secrets substitute ./data-project/datasettings.json.tmpl --output ./data-project/datasettings.json
-        env:
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+      # TODO: Modify this to point to the missing file
+      - run: mv ./data-project/datasettings.json.tmpl ./data-project/datasettings.json
 
       - run: |
           dotnet new tool-manifest
