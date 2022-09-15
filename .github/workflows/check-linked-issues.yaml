@@ -23,7 +23,7 @@ jobs:
 
               let body = pullRequest.body ?? '';
 
-              const prComments = [];
+              const markerComments = [];
 
               if (pullRequest.comments > 0) {
 
@@ -35,9 +35,9 @@ jobs:
 
                   const comments = (await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, page, per_page: 100 })).data;
 
-                  prComments.push(...comments);
+                  markerComments.push(...comments.filter(c => c.body.startsWith(reportMarker)));
 
-                  body += comments.map(comment => comment.body ?? '').join(' ');
+                  body += comments.filter(c => !c.body.startsWith(reportMarker)).map(comment => comment.body ?? '').join(' ');
 
                   page++;
 
@@ -53,23 +53,31 @@ jobs:
 
               for (const link of links) {
 
-                const issue = (await github.rest.issues.get({ owner: link.owner, repo: link.repo, issue_number: +link.issue })).data;
+                try {
 
-                const { repository } = issue.url.match(issueRegex).groups;
+                  const issue = (await github.rest.issues.get({ owner: link.owner, repo: link.repo, issue_number: +link.issue })).data;
 
-                issues.push({ id: `${repository}#${link.issue}` });
+                  const { repository } = issue.url.match(issueRegex).groups;
+
+                  issues.push({ id: `${repository}#${link.issue}` });
+
+                } catch {}
               }
 
-              for (const comment of prComments.filter(c => c.body?.startsWith(reportMarker))) {
+              for (const comment of markerComments) {
 
-                await github.rest.issues.deleteComment({ owner: context.repo.owner, repo: context.repo.repo, issue_numberL: prNumber, comment_id: comment.id });
+                try {
+
+                  await github.rest.issues.deleteComment({ owner: context.repo.owner, repo: context.repo.repo, issue_numberL: prNumber, comment_id: comment.id });
+
+                } catch {}
               }
 
               let markdown = '';
 
               if (issues.length === 0) {
 
-                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\nPlease make sure to link the issues related to this PR in the format of \`NoorDigitalAgency/repository-name#123\` wher \`123\` is the issue number.`;
+                markdown = `${reportMarker}⚠️⚠️*No issues to be marked!*⚠️⚠️\nPlease make sure that related issues are linked to the PR in the correct format: \`NoorDigitalAgency/repository-name#123\` (where \`123\` is the issue number)`;
 
               } else {
 
