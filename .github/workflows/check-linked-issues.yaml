@@ -35,8 +35,6 @@ jobs:
 
                   const comments = (await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, page, per_page: 100 })).data;
 
-                  console.log(comments);
-
                   markerComments.push(...comments.filter(c => c.body.startsWith(reportMarker)));
 
                   body += comments.filter(c => !c.body.startsWith(reportMarker)).map(comment => comment.body ?? '').join(' ');
@@ -83,7 +81,7 @@ jobs:
 
               } else {
 
-                markdown = `${reportMarker}✅<b>Issues to be marked:</b>\n${issues.reduce((previous, current, index) => `${previous}${index + 1}. ${current.id}\n`, '')}`;
+                markdown = `${reportMarker}✅<b>Issues to be marked:\n${issues.reduce((previous, current, index) => `${previous}${index + 1}. ${current.id}\n`, '')}`;
               }
 
               await github.rest.issues.createComment({owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body: markdown});
