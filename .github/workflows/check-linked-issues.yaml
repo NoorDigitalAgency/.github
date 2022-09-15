@@ -69,7 +69,7 @@ jobs:
 
               if (issues.length === 0) {
 
-                markdown = `${reportMarker}⚠️⚠️*No issues to be marked!*⚠️⚠️\nPlease make sure to link the issues related to this PR in the format of \`NoorDigitalAgency/repository-name#123\` wher \`123\` is the issue number.`;
+                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\nPlease make sure to link the issues related to this PR in the format of \`NoorDigitalAgency/repository-name#123\` wher \`123\` is the issue number.`;
 
               } else {
 
