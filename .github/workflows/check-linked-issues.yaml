@@ -1,0 +1,79 @@
+name: Check Linked Issues
+
+on:
+  workflow_call:
+
+jobs:
+  mark:
+    name: Check Linked Issues
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+              const reportMarker = '<!--Issue Marker Checker-->';
+
+              const linkRegex = /(?<owner>[A-Za-z0-9]+(?:-[A-Za-z0-9]+)?)\/(?<repo>[A-Za-z0-9-._]+)#(?<issue>\d+)/ig;
+
+              const issueRegex = /https:\/\/api\.github\.com\/repos\/(?<repository>.+?)\/issues\/\d+/;
+
+              const prNumber = context.payload.pull_request.number;
+
+              const pullRequest = (await github.rest.issues.get({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber })).data;
+
+              let body = pullRequest.body ?? '';
+
+              const prComments = [];
+
+              if (pullRequest.comments > 0) {
+
+                let count = 0;
+
+                let page = 1;
+
+                while (count < pullRequest.comments) {
+
+                  const comments = (await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, page, per_page: 100 })).data;
+
+                  prComments.push(...comments);
+
+                  body += comments.map(comment => comment.body ?? '').join(' ');
+
+                  page++;
+
+                  count += comments.length;
+                }
+              }
+
+              const links = [...body.matchAll(linkRegex)].map(link => link.groups)
+
+                .filter((link, i, all) => all.findIndex(l => `${link.owner.toLowerCase()}/${link.repo.toLowerCase()}#${link.issue}` === `${l.owner.toLowerCase()}/${l.repo.toLowerCase()}#${l.issue}`) === i);
+
+              const issues = [];
+
+              for (const link of links) {
+
+                const issue = (await github.rest.issues.get({ owner: link.owner, repo: link.repo, issue_number: +link.issue })).data;
+
+                const { repository } = issue.url.match(issueRegex).groups;
+
+                issues.push({ id: `${repository}#${link.issue}` });
+              }
+
+              for (const comment of prComments.filter(c => c.body?.startsWith(reportMarker))) {
+
+                await github.rest.issues.deleteComment({ owner: context.repo.owner, repo: context.repo.repo, issue_numberL: prNumber, comment_id: comment.id });
+              }
+
+              let markdown = '';
+
+              if (issues.length === 0) {
+
+                markdown = `${reportMarker}⚠️ **No issues to be marked!**\nPlease make sure to link the issues related to this PR in the format of \`NoorDigitalAgency/repository-name#123\` wher \`123\` is the issue number.`;
+
+              } else {
+
+                markdown = `${reportMarker}✅ **Issues to be marked:**\n${issues.reduce((previous, current, index) => `${previous}${index + 1}. ${current.id}\n`, '')}`;
+              }
+
+              await github.rest.issues.createComment({owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body: markdown});
