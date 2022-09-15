@@ -31,7 +31,7 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
-      # TODO: Modify this to point to the missing file
+      # TODO: Rename the templates so that the code compiles
       - run: mv ./data-project/datasettings.json.tmpl ./data-project/datasettings.json
 
       - run: |

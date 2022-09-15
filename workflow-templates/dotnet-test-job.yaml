@@ -47,7 +47,7 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
-      # TODO: Modify this to point to the missing file
+      # TODO: Rename the templates so that the code compiles
       - run: mv ./project/appsettings.json.tmpl ./project/appsettings.json
 
       # TODO: If needed, change the 'cd .' command to either where the solution is located or where the tests project is located
