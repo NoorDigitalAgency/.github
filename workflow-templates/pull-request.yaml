@@ -8,6 +8,7 @@ on:
 jobs:
   issues:
     uses: NoorDigitalAgency/.github/.github/workflows/check-linked-issues.yaml@main
+    secrets: inherit
 
   test:
     uses: ./.github/workflows/test-job.yaml # TODO: Check to match the correct file name
