@@ -35,6 +35,8 @@ jobs:
 
                   const comments = (await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, page, per_page: 100 })).data;
 
+                  console.log(comments);
+
                   markerComments.push(...comments.filter(c => c.body.startsWith(reportMarker)));
 
                   body += comments.filter(c => !c.body.startsWith(reportMarker)).map(comment => comment.body ?? '').join(' ');
@@ -61,7 +63,7 @@ jobs:
 
                   issues.push({ id: `${repository}#${link.issue}` });
 
-                } catch {}
+                } catch (e) { console.log(e); }
               }
 
               for (const comment of markerComments) {
@@ -70,18 +72,18 @@ jobs:
 
                   await github.rest.issues.deleteComment({ owner: context.repo.owner, repo: context.repo.repo, issue_numberL: prNumber, comment_id: comment.id });
 
-                } catch {}
+                } catch (e) { console.log(e); }
               }
 
               let markdown = '';
 
               if (issues.length === 0) {
 
-                markdown = `${reportMarker}⚠️⚠️*No issues to be marked!*⚠️⚠️\nPlease make sure that related issues are linked to the PR in the correct format: \`NoorDigitalAgency/repository-name#123\` (where \`123\` is the issue number)`;
+                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\nPlease make sure that related issues are linked to the PR in the correct format: \`NoorDigitalAgency/repository-name#123\` (where \`123\` is the issue number)`;
 
               } else {
 
-                markdown = `${reportMarker}✅*Issues to be marked:*\n${issues.reduce((previous, current, index) => `${previous}${index + 1}. ${current.id}\n`, '')}`;
+                markdown = `${reportMarker}✅<b>Issues to be marked:</b>\n${issues.reduce((previous, current, index) => `${previous}${index + 1}. ${current.id}\n`, '')}`;
               }
 
               await github.rest.issues.createComment({owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body: markdown});
