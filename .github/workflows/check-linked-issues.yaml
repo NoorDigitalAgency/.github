@@ -84,7 +84,7 @@ jobs:
 
               let markdown = '';
 
-              if (issues.length === 0 || issues.every(i => i.labels.some(l => ['beta', 'production'].includes(l))) || issues.every(i => !i.open)) {
+              if (issues.length === 0 || issues.every(i => i.labels.some(l => ['beta', 'production'].includes(l)) || !i.open || i.pr)) {
 
                 markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\n@${pullRequest.user.login}, please link the related issues <b>(if any)</b>.\n Valid formats:\n- \`#123\` for issues in the current repository \`(${context.repo.owner}/${context.repo.repo}\`. (where \`123\` is the issue number)\n- \`NoorDigitalAgency/repository-name#456\` for cross-repository issues. (where \`456\` is the issue number)`;
 
