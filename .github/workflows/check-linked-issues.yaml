@@ -104,7 +104,7 @@ jobs:
                     line += ' (⚠️ re-linking already labeled `alpha`)';
                   }
 
-                  return `\n${previous}${index + 1}. ${line}`;
+                  return `${previous}\n${index + 1}. ${line}`;
 
                 }, '')}- @${pullRequest.user.login}, please double-check to make sure that correct issues are linked.`;
               }
