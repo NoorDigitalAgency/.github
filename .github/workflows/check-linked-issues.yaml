@@ -52,9 +52,11 @@ jobs:
 
               const links = [...body.matchAll(linkRegex)].map(link => link.groups)
 
-                .filter((link, i, all) => all.findIndex(l => `${link.owner?.toLowerCase() ?? owner}/${link.repo?.toLowerCase() ?? repo}#${link.issue}` === `${l.owner?.toLowerCase() ?? owner}/${l.repo?.toLowerCase() ?? repo}#${l.issue}`) === i);
+                .filter((link, i, all) => all.findIndex(l => `${link.owner?.toLowerCase() ?? owner}/${link.repo?.toLowerCase() ?? repo}#${link.issue}` === `${l.owner?.toLowerCase() ?? owner}/${l.repo?.toLowerCase() ?? repo}#${l.issue}`) === i)
 
-              console.log(links, context, context.repo);
+                .map(link => ({ ...link, owner: link.owner ?? owner, repo: link.repo ?? repo}));
+
+              console.log(links);
 
               const issues = [];
 
