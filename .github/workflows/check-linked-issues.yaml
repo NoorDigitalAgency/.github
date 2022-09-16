@@ -95,6 +95,8 @@ jobs:
 
               } else {
 
+                let markedInvalids = false;
+
                 markdown = `${reportMarker}✅<b>Issues to be marked:</b>${issues
 
                     .sort((a,b) => (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) === (!b.pr && b.open && b.labels.every(l => !['beta', 'production'].includes(l))) ? 0 : (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) ? -1 : 0)
@@ -105,16 +107,26 @@ jobs:
 
                   let line = `${current.id}`;
 
+                  let shouldMark = false;
+
                   if (current.pr || !current.open || current.labels.some(l => ['beta', 'production'].includes(l))) {
+
+                    shouldMark = !markedInvalids;
+
+                    markedInvalids = true;
 
                     line = `~~${line}~~ ${current.pr ? ' (🛑 pull request)' : !current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`;
 
                   } else if (current.labels.includes('alpha')) {
 
+                    shouldMark = !markedInvalids;
+
+                    markedInvalids = true;
+
                     line += ' (⚠️ re-linking already `alpha`)';
                   }
 
-                  return `${previous}\n${index + 1}. ${line}`;
+                  return `${previous}\n${shouldMark ? 'Invalid links:\n' : ''}${index + 1}. ${line}`;
 
                 }, '')}\n- @${pullRequest.user.login}, check the detected linked issues.`;
               }
