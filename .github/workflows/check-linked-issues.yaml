@@ -54,7 +54,7 @@ jobs:
 
                 .filter((link, i, all) => all.findIndex(l => `${link.owner?.toLowerCase() ?? owner}/${link.repo?.toLowerCase() ?? repo}#${link.issue}` === `${l.owner?.toLowerCase() ?? owner}/${l.repo?.toLowerCase() ?? repo}#${l.issue}`) === i);
 
-              console.log(links);
+              console.log(links, context, context.repo);
 
               const issues = [];
 
