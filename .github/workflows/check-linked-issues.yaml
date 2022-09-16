@@ -119,7 +119,7 @@ jobs:
 
                   } else if (current.labels.includes('alpha')) {
 
-                    line += ' [⚠️🏷️re-linking `alpha`]';
+                    line += ' [⚠️re-linking `alpha`]';
                   }
 
                   return `${previous}\n${shouldMark ? '---\n' : ''}${index + 1}. ${line}`;
