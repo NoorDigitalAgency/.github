@@ -86,7 +86,7 @@ jobs:
 
               if (issues.length === 0 || issues.every(i => i.labels.some(l => ['beta', 'production'].includes(l)) || !i.open || i.pr)) {
 
-                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\n@${pullRequest.user.login}, please link the related issues <b>(if any)</b> either like \`#123\` for current repository or \`NoorDigitalAgency/repository-name#456\` for cross-repository issues.\n🗑️<b>Invalid links:</b>\n`;
+                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\n@${pullRequest.user.login}, please link the related issues <b>(if any)</b> either like \`#123\` for current repository or \`NoorDigitalAgency/repository-name#456\` for cross-repository issues.\n\n🗑️<b>Invalid links:</b>\n`;
 
                 if (issues.length > 0) {
 
@@ -97,7 +97,7 @@ jobs:
 
                 let markedInvalids = false;
 
-                markdown = `${reportMarker}✅<b>Issues to be marked:</b>${issues
+                markdown = `${reportMarker}✅<b>Issues to be marked:</b>\n${issues
 
                     .sort((a,b) => (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) === (!b.pr && b.open && b.labels.every(l => !['beta', 'production'].includes(l))) ? 0 : (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) ? -1 : 0)
 
