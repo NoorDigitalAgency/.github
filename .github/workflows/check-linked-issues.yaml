@@ -90,7 +90,7 @@ jobs:
 
                 if (issues.length > 0) {
 
-                  markdown += issues.reduce((previous, current, index) => `\n${previous}${index + 1}. ~~${current.id}~~ ${!current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`, '');
+                  markdown += issues.reduce((previous, current, index) => `\n${previous}${index + 1}. ~~${current.id}~~ ${current.pr ? ' (🛑 pull request)' : !current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`, '');
                 }
 
               } else {
@@ -99,13 +99,13 @@ jobs:
 
                   let line = `${current.id}`;
 
-                  if (!current.open || current.labels.some(l => ['beta', 'production'].includes(l))) {
+                  if (current.pr || !current.open || current.labels.some(l => ['beta', 'production'].includes(l))) {
 
-                    line = `~~${line}~~ ${!current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`;
+                    line = `~~${line}~~ ${current.pr ? ' (🛑 pull request)' : !current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`;
 
                   } else if (current.labels.includes('alpha')) {
 
-                    line += ' (⚠️ re-linking already labeled `alpha`)';
+                    line += ' (⚠️ re-linking already `alpha`)';
                   }
 
                   return `${previous}\n${index + 1}. ${line}`;
