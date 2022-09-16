@@ -119,10 +119,6 @@ jobs:
 
                   } else if (current.labels.includes('alpha')) {
 
-                    shouldMark = !markedInvalids;
-
-                    markedInvalids = true;
-
                     line += ' (⚠️ re-linking already `alpha`)';
                   }
 
