@@ -95,7 +95,13 @@ jobs:
 
               } else {
 
-                markdown = `${reportMarker}✅<b>Issues to be marked:</b>${issues.reduce((previous, current, index) => {
+                markdown = `${reportMarker}✅<b>Issues to be marked:</b>${issues
+
+                    .sort((a,b) => (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) === (!b.pr && b.open && b.labels.every(l => !['beta', 'production'].includes(l))) ? 0 : (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) ? -1 : 0)
+
+                    .reduce((previous, current, index) =>
+
+                {
 
                   let line = `${current.id}`;
 
@@ -110,7 +116,7 @@ jobs:
 
                   return `${previous}\n${index + 1}. ${line}`;
 
-                }, '')}\n- @${pullRequest.user.login}, please double-check to make sure that correct issues are linked.`;
+                }, '')}\n- @${pullRequest.user.login}, check the detected linked issues.`;
               }
 
               await github.rest.issues.createComment({owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body: markdown});
