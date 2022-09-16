@@ -97,7 +97,7 @@ jobs:
 
                 let markedInvalids = false;
 
-                markdown = `${reportMarker}✅<b>Issues to be marked:</b>\n${issues
+                markdown = `${reportMarker}✅<b>Issues to be marked:</b>\n- @${pullRequest.user.login}, check the detected linked issues.\n${issues
 
                     .sort((a,b) => (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) === (!b.pr && b.open && b.labels.every(l => !['beta', 'production'].includes(l))) ? 0 : (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) ? -1 : 0)
 
@@ -122,9 +122,9 @@ jobs:
                     line += ' (⚠️ re-linking already `alpha`)';
                   }
 
-                  return `${previous}\n${shouldMark ? '🗑️<b>Invalid links:</b>\n' : ''}${index + 1}. ${line}`;
+                  return `${previous}\n${shouldMark ? '---\n' : ''}${index + 1}. ${line}`;
 
-                }, '')}\n- @${pullRequest.user.login}, check the detected linked issues.`;
+                }, '')}`;
               }
 
               await github.rest.issues.createComment({owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body: markdown});
