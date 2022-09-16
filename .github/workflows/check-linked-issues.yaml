@@ -86,11 +86,11 @@ jobs:
 
               if (issues.length === 0 || issues.every(i => i.labels.some(l => ['beta', 'production'].includes(l)) || !i.open || i.pr)) {
 
-                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\n@${pullRequest.user.login}, please link the related issues <b>(if any)</b>.\n Valid formats:\n- \`#123\` for issues in the current repository \`(${context.repo.owner}/${context.repo.repo}\`. (where \`123\` is the issue number)\n- \`NoorDigitalAgency/repository-name#456\` for cross-repository issues. (where \`456\` is the issue number)`;
+                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\n@${pullRequest.user.login}, please link the related issues <b>(if any)</b> either like \`#123\` for current repository or \`NoorDigitalAgency/repository-name#456\` for cross-repository issues.\n🗑️<b>Invalid links:</b>\n`;
 
                 if (issues.length > 0) {
 
-                  markdown += issues.reduce((previous, current, index) => `\n${previous}${index + 1}. ~~${current.id}~~ ${current.pr ? ' (🛑 pull request)' : !current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`, '');
+                  markdown += issues.reduce((previous, current, index) => `${previous}\n${index + 1}. ~~${current.id}~~ ${current.pr ? ' (🛑 pull request)' : !current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`, '');
                 }
 
               } else {
