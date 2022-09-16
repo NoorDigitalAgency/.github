@@ -126,7 +126,7 @@ jobs:
                     line += ' (⚠️ re-linking already `alpha`)';
                   }
 
-                  return `${previous}\n${shouldMark ? 'Invalid links:\n' : ''}${index + 1}. ${line}`;
+                  return `${previous}\n${shouldMark ? '🗑️<b>Invalid links:</b>\n' : ''}${index + 1}. ${line}`;
 
                 }, '')}\n- @${pullRequest.user.login}, check the detected linked issues.`;
               }
