@@ -78,11 +78,11 @@ jobs:
 
               if (issues.length === 0) {
 
-                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\n@${pullRequest.user.login}, please make sure that related issues are linked to the PR in the correct format: \`NoorDigitalAgency/repository-name#123\` (where \`123\` is the issue number)`;
+                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\n@${pullRequest.user.login}, please make sure that related issues are linked to the PR in the correct format:\n- \`#123\` for issues in the current repository \`(${context.repo.owner}/${context.repo.repo}\`. (where \`123\` is the issue number)\n- \`NoorDigitalAgency/repository-name#456\` for cross-repository issues. (where \`456\` is the issue number)`;
 
               } else {
 
-                markdown = `${reportMarker}✅<b>Issues to be marked:\n${issues.reduce((previous, current, index) => `${previous}${index + 1}. ${current.id}\n`, '')}Ping: @${pullRequest.user.login}`;
+                markdown = `${reportMarker}✅<b>Issues to be marked:\n${issues.reduce((previous, current, index) => `${previous}${index + 1}. ${current.id}\n`, '')}- @${pullRequest.user.login}, please double check to make sure that correct issues are linked.`;
               }
 
               await github.rest.issues.createComment({owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body: markdown});
