@@ -22,7 +22,7 @@ jobs:
 
               const pullRequest = (await github.rest.issues.get({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber })).data;
 
-              let body = pullRequest.body ?? '';
+              const body = pullRequest.body ?? '';
 
               const markerComments = [];
 
@@ -37,8 +37,6 @@ jobs:
                   const comments = (await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, page, per_page: 100 })).data;
 
                   markerComments.push(...comments.filter(c => c.body.startsWith(reportMarker)));
-
-                  body += comments.filter(c => !c.body.startsWith(reportMarker)).map(comment => comment.body ?? '').join(' ');
 
                   page++;
 
