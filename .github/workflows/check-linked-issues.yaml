@@ -54,6 +54,8 @@ jobs:
 
                 .filter((link, i, all) => all.findIndex(l => `${link.owner?.toLowerCase() ?? owner}/${link.repo?.toLowerCase() ?? repo}#${link.issue}` === `${l.owner?.toLowerCase() ?? owner}/${l.repo?.toLowerCase() ?? repo}#${l.issue}`) === i);
 
+              console.log(links);
+
               const issues = [];
 
               for (const link of links) {
@@ -106,7 +108,7 @@ jobs:
 
                   return `${previous}\n${index + 1}. ${line}`;
 
-                }, '')}- @${pullRequest.user.login}, please double-check to make sure that correct issues are linked.`;
+                }, '')}\n- @${pullRequest.user.login}, please double-check to make sure that correct issues are linked.`;
               }
 
               await github.rest.issues.createComment({owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body: markdown});
