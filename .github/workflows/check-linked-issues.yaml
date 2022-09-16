@@ -14,7 +14,7 @@ jobs:
           script: |
               const reportMarker = '<!--Issue Marker Checker-->';
 
-              const linkRegex = /(?<owner>[A-Za-z0-9]+(?:-[A-Za-z0-9]+)?)\/(?<repo>[A-Za-z0-9-._]+)#(?<issue>\d+)/ig;
+              const linkRegex = /(?:(?<owner>[A-Za-z0-9]+(?:-[A-Za-z0-9]+)?)\/(?<repo>[A-Za-z0-9-._]+))?#(?<issue>\d+)/ig;
 
               const issueRegex = /https:\/\/api\.github\.com\/repos\/(?<repository>.+?)\/issues\/\d+/;
 
@@ -46,9 +46,13 @@ jobs:
                 }
               }
 
+              const owner = context.repo.owner;
+
+              const repo = context.repo.repo;
+
               const links = [...body.matchAll(linkRegex)].map(link => link.groups)
 
-                .filter((link, i, all) => all.findIndex(l => `${link.owner.toLowerCase()}/${link.repo.toLowerCase()}#${link.issue}` === `${l.owner.toLowerCase()}/${l.repo.toLowerCase()}#${l.issue}`) === i);
+                .filter((link, i, all) => all.findIndex(l => `${link.owner?.toLowerCase() ?? owner}/${link.repo?.toLowerCase() ?? repo}#${link.issue}` === `${l.owner?.toLowerCase() ?? owner}/${l.repo?.toLowerCase() ?? repo}#${l.issue}`) === i);
 
               const issues = [];
 
@@ -60,7 +64,7 @@ jobs:
 
                   const { repository } = issue.url.match(issueRegex).groups;
 
-                  issues.push({ id: `${repository}#${link.issue}` });
+                  issues.push({ id: `${repository}#${link.issue}`, labels: issue.labels.map(label => (typeof(label) === 'string' ? label : label.name) ?? ''), open: issue.state !== 'closed', pr: issue.pull_request != null });
 
                 } catch (e) { console.log(e); }
               }
@@ -76,13 +80,33 @@ jobs:
 
               let markdown = '';
 
-              if (issues.length === 0) {
+              if (issues.length === 0 || issues.every(i => i.labels.some(l => ['beta', 'production'].includes(l))) || issues.every(i => !i.open)) {
 
-                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\n@${pullRequest.user.login}, please make sure that related issues are linked to the PR in the correct format:\n- \`#123\` for issues in the current repository \`(${context.repo.owner}/${context.repo.repo}\`. (where \`123\` is the issue number)\n- \`NoorDigitalAgency/repository-name#456\` for cross-repository issues. (where \`456\` is the issue number)`;
+                markdown = `${reportMarker}⚠️⚠️<b>No issues to be marked!</b>⚠️⚠️\n@${pullRequest.user.login}, please link the related issues <b>(if any)</b>.\n Valid formats:\n- \`#123\` for issues in the current repository \`(${context.repo.owner}/${context.repo.repo}\`. (where \`123\` is the issue number)\n- \`NoorDigitalAgency/repository-name#456\` for cross-repository issues. (where \`456\` is the issue number)`;
+
+                if (issues.length > 0) {
+
+                  markdown += issues.reduce((previous, current, index) => `\n${previous}${index + 1}. ~~${current.id}~~ ${!current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`, '');
+                }
 
               } else {
 
-                markdown = `${reportMarker}✅<b>Issues to be marked:\n${issues.reduce((previous, current, index) => `${previous}${index + 1}. ${current.id}\n`, '')}- @${pullRequest.user.login}, please double check to make sure that correct issues are linked.`;
+                markdown = `${reportMarker}✅<b>Issues to be marked:</b>${issues.reduce((previous, current, index) => {
+
+                  let line = `${current.id}`;
+
+                  if (!current.open || current.labels.some(l => ['beta', 'production'].includes(l))) {
+
+                    line = `~~${line}~~ ${!current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`;
+
+                  } else if (current.labels.includes('alpha')) {
+
+                    line += ' (⚠️ re-linking already labeled `alpha`)';
+                  }
+
+                  return `\n${previous}${index + 1}. ${line}`;
+
+                }, '')}- @${pullRequest.user.login}, please double-check to make sure that correct issues are linked.`;
               }
 
               await github.rest.issues.createComment({owner: context.repo.owner, repo: context.repo.repo, issue_number: prNumber, body: markdown});
