@@ -90,14 +90,14 @@ jobs:
 
                 if (issues.length > 0) {
 
-                  markdown += issues.reduce((previous, current, index) => `${previous}\n${index + 1}. ~~${current.id}~~ ${current.pr ? ' (🛑 pull request)' : !current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`, '');
+                  markdown += issues.reduce((previous, current, index) => `${previous}\n${index + 1}. ~~${current.id}~~ ${current.pr ? ' [🛑pull request]' : !current.open ? ' [📕closed]' : ` [🏷️labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}]`, '');
                 }
 
               } else {
 
                 let markedInvalids = false;
 
-                markdown = `${reportMarker}✅<b>Issues to be marked:</b>\n- @${pullRequest.user.login}, check the detected linked issues.\n${issues
+                markdown = `${reportMarker}✅<b>Issues to be marked!</b>\n- @${pullRequest.user.login}, check the detected linked issues:\n${issues
 
                     .sort((a,b) => (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) === (!b.pr && b.open && b.labels.every(l => !['beta', 'production'].includes(l))) ? 0 : (!a.pr && a.open && a.labels.every(l => !['beta', 'production'].includes(l))) ? -1 : 0)
 
@@ -115,11 +115,11 @@ jobs:
 
                     markedInvalids = true;
 
-                    line = `~~${line}~~ ${current.pr ? ' (🛑 pull request)' : !current.open ? ' (📕 closed)' : `🏷️ labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\``}`;
+                    line = `~~${line}~~ ${current.pr ? ' [🛑pull request]' : !current.open ? ' [📕closed]' : ` [🏷️labeled \`${current.labels.includes('beta') ? 'beta' : 'production'}\`]`}`;
 
                   } else if (current.labels.includes('alpha')) {
 
-                    line += ' (⚠️ re-linking already `alpha`)';
+                    line += ' [⚠️re-linking `alpha`]';
                   }
 
                   return `${previous}\n${shouldMark ? '---\n' : ''}${index + 1}. ${line}`;
