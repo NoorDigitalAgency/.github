@@ -1,0 +1,12 @@
+{
+  "name": "NPM Publish Job",
+  "description": "NPM Publish Job CI/CD starter workflow.",
+  "iconName": "release-icon",
+  "categories": [
+      "JavaScript",
+      "TypeScript"
+  ],
+  "filePatterns": [
+      "package.json$"
+  ]
+}
