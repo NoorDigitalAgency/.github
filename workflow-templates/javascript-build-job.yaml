@@ -46,3 +46,4 @@ jobs:
           path: |
             Dockerfile
             dist
+            default.conf
