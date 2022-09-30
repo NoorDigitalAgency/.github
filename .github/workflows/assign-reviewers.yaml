@@ -22,8 +22,9 @@ jobs:
         with:
           script: |
             const {teams, users} = (await github.rest.pulls.listRequestedReviewers({owner: context.repo.owner, repo: context.repo.repo, pull_number: ${{ github.event.pull_request.number }}})).data;
-            console.log(teams, users);
-            if (teams.length > 0 || users.length > 0) {
+            const reviews = (await github.rest.pulls.listReviews({owner: context.repo.owner, repo: context.repo.repo, pull_number: ${{ github.event.pull_request.number }}})).data;
+            console.log(teams, users, reviews);
+            if (teams.length > 0 || users.length > 0 || reviews.length > 0) {
               core.notice('Skipping reviewer assignment since reviewers are already assigned.');
               return;
             }
