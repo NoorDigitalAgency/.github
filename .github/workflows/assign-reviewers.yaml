@@ -21,6 +21,11 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
+            const {teams, users} = (await github.rest.pulls.listRequestedReviewers({owner: context.repo.owner, repo: context.repo.repo, pull_number: ${{ github.event.pull_request.number }}})).data;
+            if (teams.length > 0 || users.length > 0) {
+              core.notice('Skipping reviewer assignment since reviewers are already assigned.');
+              return;
+            }
             const strict = ${{ inputs.strict }};
             const fs = require('fs');
             const path = './.github/reviewers.json';
