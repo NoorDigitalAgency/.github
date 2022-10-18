@@ -1,4 +1,4 @@
-name: NuGet Hotfix Release
+name: Package Hotfix Release
 
 on:
   workflow_dispatch:
@@ -29,7 +29,7 @@ jobs:
     secrets: inherit
 
   publish:
-    name: Publish NuGet
+    name: Publish Package
     needs: [test]
     uses: ./.github/workflows/publish-job.yaml # TODO: Check to match the correct file name
     with:
