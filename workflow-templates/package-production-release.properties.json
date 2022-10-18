@@ -1,13 +1,15 @@
 {
-  "name": "NuGet Production Release",
-  "description": "NuGet Production Release CI/CD starter workflow.",
+  "name": "Package Production Release",
+  "description": "Package Production Release CI/CD starter workflow.",
   "iconName": "release-icon",
   "categories": [
-      "C#"
+    "C#",
+    "JavaScript",
+    "TypeScript"
   ],
   "filePatterns": [
-      "^Dockerfile",
-      ".*\\.sln$",
-      ".*\\.csproj$"
+    "package.json$",
+    ".*\\.sln$",
+    ".*\\.csproj$"
   ]
 }
