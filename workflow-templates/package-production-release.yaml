@@ -1,4 +1,4 @@
-name: NuGet Production Release
+name: Package Production Release
 
 on:
   workflow_dispatch:
