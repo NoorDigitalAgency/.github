@@ -35,3 +35,5 @@ jobs:
           version: ${{ env.RELEASE_VERSION }}
           previous-version: ${{ env.RELEASE_PREVIOUS_VERSION }}
           close-issues: ${{ inputs.close-issues }}
+          zenhub-key: ${{ secrets.ZENHUB_KEY }}
+          zenhub-workspace: ${{ secrets.ZENHUB_WORKSPACE }}
