@@ -1,0 +1,5 @@
+{
+    "name": "ZenHub to Sleekplan Sync",
+    "description": "Syncs the status of the Sleekplan posts according to ZenHub board pipelines",
+    "iconName": "release-icon"
+}
