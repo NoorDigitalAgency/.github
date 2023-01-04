@@ -1,0 +1,24 @@
+name: ZenHub to Sleekplan Sync
+
+on:
+  workflow_call:
+
+jobs:
+  sync:
+    name: Sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: |
+          echo -e "@noordigitalagency:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=$TOKEN\n" > ~/.npmrc
+          npm install
+        env:
+          TOKEN: ${{ secrets.PAT }}
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const { default: axios} = await import('${{ github.workspace }}/node_modules/axios/dist/node/axios.cjs');
+            const { default: zenhub2sleekplan } = await import('${{ github.workspace }}/node_modules/@noordigitalagency/zenhub2sleekplan/index.js');
+            const config = require('./sleekplan-config.json');
+            await zenhub2sleekplan(axios, '${{ secrets.ZENHUB_KEY }}', '${{ secrets.ZENHUB_WORKSPACE }}', '${{ secrets.SLEEKPLAN_KEY }}', config, core.warning, core.notice, core.info);
