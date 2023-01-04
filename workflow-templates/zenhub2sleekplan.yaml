@@ -1,0 +1,15 @@
+name: ZenHub to Sleekplan Sync
+
+on:
+  schedule:
+    - cron: '*/15 6-22 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Sync
+    uses: NoorDigitalAgency/.github/.github/workflows/zenhub2sleekplan.yaml@main
+    secrets: inherit
+    # Add the sleekplan-config.json and package.json to the root (Examples can be found in the zenhub2sleekplan folder)
+    # Add the required secrets
