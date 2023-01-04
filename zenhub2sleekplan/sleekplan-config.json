@@ -1,0 +1,13 @@
+{
+    "url": "https://lynx-roadmap.noordigital.com/",
+    "status": {
+        "In progress": "in-progress",
+        "Implemented": "s638e8b2bd9e75",
+        "Review": "s638e8b2bd9e75",
+        "Alpha": "s638e8b2bd9e75",
+        "Beta": "s638e8b2bd9e75",
+        "Production": "completed",
+        "Closed": "closed",
+        "*": "planned"
+    }
+}
