@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@noordigitalagency/zenhub2sleekplan": "^1.3.0"
+    "@noordigitalagency/zenhub2sleekplan": "*"
   }
 }
