@@ -21,4 +21,4 @@ jobs:
             const { default: axios} = await import('${{ github.workspace }}/node_modules/axios/dist/node/axios.cjs');
             const { default: zenhub2sleekplan } = await import('${{ github.workspace }}/node_modules/@noordigitalagency/zenhub2sleekplan/index.js');
             const config = require('./sleekplan-config.json');
-            await zenhub2sleekplan(axios, '${{ secrets.ZENHUB_KEY }}', '${{ secrets.ZENHUB_WORKSPACE }}', '${{ secrets.SLEEKPLAN_KEY }}', config, core.warning, core.notice, core.info);
+            await zenhub2sleekplan(axios, '${{ secrets.ZENHUB_KEY }}', '${{ secrets.ZENHUB_WORKSPACE }}', '${{ secrets.SLEEKPLAN_KEY }}', config, core);
