@@ -41,6 +41,7 @@ jobs:
     needs: [build,test]
     uses: NoorDigitalAgency/.github/.github/workflows/deploy.yaml@main
     with:
+      fast_artifacts: true
       deployment_folder_artifact: deployment-artifact
       stage: production
       resource_namespace: default # TODO: Update if needed
