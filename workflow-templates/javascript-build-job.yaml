@@ -39,10 +39,12 @@ jobs:
       - run: npm run build -- --mode $([ '${{ inputs.stage }}' == 'alpha' ] && echo 'develop' || ([ '${{ inputs.stage }}' == 'beta' ] && echo 'release' || echo 'production'))
 
       - if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v3
+        uses: noordigitalagency/artifact-upload@main
         with:
           name: deployment-artifact
-          retention-days: 2
+          key: ${{ secrets.BACKBLAZE_KEY }}
+          id: ${{ secrets.BACKBLAZE_ID }}
+          bucket: ${{ secrets.BACKBLAZE_BUCKET }}
           path: |
             Dockerfile
             dist
