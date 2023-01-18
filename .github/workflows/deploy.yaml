@@ -25,6 +25,11 @@ on:
         type: string
         default: v1.21.11
         required: false
+      fast_artifacts:
+        description: Enables Alternative Artifacts
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   deploy:
@@ -35,9 +40,18 @@ jobs:
         with:
           token: ${{ github.token }}
 
-      - uses: actions/download-artifact@v3
+      - if: inputs.fast_artifacts == false
+        uses: actions/download-artifact@v3
         with:
           name: ${{ inputs.deployment_folder_artifact }}
+          
+      - if: inputs.fast_artifacts == true
+        uses: NoorDigitalAgency/artifact-download@main
+        with:
+          name: ${{ inputs.deployment_folder_artifact }}
+          key: ${{ secrets.BACKBLAZE_KEY }}
+          id: ${{ secrets.BACKBLAZE_ID }}
+          bucket: ${{ secrets.BACKBLAZE_BUCKET }}
 
       - id: analyzing
         name: Analyzing
