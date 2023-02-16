@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-dotnet@v2
         with:
           source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
-          dotnet-version: '6.0.x'
+          dotnet-version: '7.0.x'
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
@@ -36,7 +36,7 @@ jobs:
       - run: mv ./project/appsettings.json.tmpl ./project/appsettings.json
 
       # TODO: Correct the path to the project file
-      - run: dotnet publish -c Release -r ubuntu-x64 -o outputs --self-contained -p:InformationalVersion=${{ env.RELEASE_VERSION }} ./project.csproj
+      - run: dotnet publish -c Release -r ubuntu-x64 --self-contained -p:PublishDir outputs -p:InformationalVersion=${{ env.RELEASE_VERSION }} ./project.csproj
 
       # TODO: Rename back to templates so that the secret manager can mount them
       - run: mv ./project/appsettings.json ./project/appsettings.json.tmpl
