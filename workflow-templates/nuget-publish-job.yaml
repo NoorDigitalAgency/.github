@@ -32,7 +32,7 @@ jobs:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
       - if: inputs.stage == 'alpha'
-        run: dotnet pack -c Debug --include-source -p:PublishDir outputs -p:Version=${{ env.RELEASE_PLAIN_VERSION }} -p:RepositoryUrl=${{ github.event.repository.html_url }}
+        run: dotnet pack -c Debug --include-source -p:PublishDir=outputs -p:Version=${{ env.RELEASE_PLAIN_VERSION }} -p:RepositoryUrl=${{ github.event.repository.html_url }}
 
       - if: inputs.stage != 'alpha'
         run: dotnet pack -c Release -p:PublishDir outputs -p:Version=${{ env.RELEASE_PLAIN_VERSION }} -p:RepositoryUrl=${{ github.event.repository.html_url }}
