@@ -42,7 +42,7 @@ jobs:
         with:
           source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
           dotnet-version: |
-            6.0.x
+            7.0.x
             5.0.x
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
