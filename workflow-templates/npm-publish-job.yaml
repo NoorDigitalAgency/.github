@@ -31,7 +31,7 @@ jobs:
       - run: |
           echo -e "@noordigitalagency:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=$TOKEN\n" > ~/.npmrc
           npm install
-          npm version ${{ env.RELEASE_VERSION }} --no-commit-hooks --no-git-tag-version
+          npm version ${{ env.RELEASE_EXTENDED_VERSION }} --no-commit-hooks --no-git-tag-version
         env:
           CI: true
           TOKEN: ${{ secrets.PAT }}
