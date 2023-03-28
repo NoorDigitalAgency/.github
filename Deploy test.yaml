@@ -1,0 +1,108 @@
+name: Deploy
+on:
+  workflow_call:
+    inputs:
+      deployment_folder_artifact:
+        description: Deployment Folder Artifact Name
+        required: true
+        type: string
+      stage:
+        description: Stage
+        type: string
+        required: true
+      resource_type:
+        description: Kubernetes Resource Type
+        type: string
+        default: daemonset
+        required: false
+      resource_namespace:
+        description: Kubernetes Resource Namespace
+        type: string
+        default: default
+        required: false
+      kubectl_version:
+        description: Kubectl Version
+        type: string
+        default: v1.21.11
+        required: false
+      fast_artifacts:
+        description: Enables Alternative Artifacts
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: NoorDigitalAgency/release-lookup@main
+        with:
+          token: ${{ github.token }}
+
+      - if: inputs.fast_artifacts == false
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.deployment_folder_artifact }}
+          
+      - if: inputs.fast_artifacts == true
+        uses: NoorDigitalAgency/artifact-download@main
+        with:
+          name: ${{ inputs.deployment_folder_artifact }}
+          key: ${{ secrets.BACKBLAZE_KEY }}
+          id: ${{ secrets.BACKBLAZE_ID }}
+          bucket: ${{ secrets.BACKBLAZE_BUCKET }}
+
+      - id: analyzing
+        name: Analyzing
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = process.env.RELEASE_VERSION;
+            const stage = '${{ inputs.stage }}';
+            const resource = '${{ inputs.resource_type }}';
+            const name = context.payload.repository.name;
+            const label = stage !== 'production' ? `-${ stage }` : '';
+            return {
+              tags: `noorteam/${ name }:${ version },noorteam/${ name }:latest${ label }`,
+              resource: `${ resource }/${ name }${ label }`,
+              environment: stage === 'alpha' ? 'develop' : stage === 'beta' ? 'release' : 'production'
+            };
+
+      - name: Docker Hub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker Hub Push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ fromJson(steps.analyzing.outputs.result).tags }}
+          build-args: E20R_ENV=${{ fromJson(steps.analyzing.outputs.result).environment }}
+
+      - env:
+          OPENVPN_CONFIG: ${{ secrets.OPENVPN_CONFIG }}
+          OPENVPN_USERNAME: ${{ secrets.OPENVPN_USERNAME }}
+          OPENVPN_PASSWORD: ${{ secrets.OPENVPN_PASSWORD }}
+        run: |
+          [[ ! -z "$OPENVPN_CONFIG" ]] && [[ ! -z "$OPENVPN_USERNAME" ]] && [[ ! -z "$OPENVPN_PASSWORD" ]] && \
+          sudo apt install apt-transport-https && wget https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub && sudo apt-key add openvpn-repo-pkg-key.pub && \
+          sudo wget -O /etc/apt/sources.list.d/openvpn3.list "https://swupdate.openvpn.net/community/openvpn3/repos/openvpn3-$(lsb_release -c -s).list" && \
+          sudo apt update && sudo apt install openvpn3 && echo "$OPENVPN_CONFIG" > config.ovpn && echo "$OPENVPN_USERNAME" > config.login && echo "$OPENVPN_PASSWORD" >> config.login && \
+          openvpn3 session-start --config config.ovpn && echo "TUNNEL_CONNECTION=established" >> $GITHUB_ENV || echo
+
+      - name: Kubernetes Resource Update
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG" > ~/.kube/config
+          curl -LO https://dl.k8s.io/release/${{ inputs.kubectl_version }}/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          ./kubectl rollout restart ${{ fromJson(steps.analyzing.outputs.result).resource }} --namespace=${{ inputs.resource_namespace }}
+
+      - if: ${{ always() }}
+        run: echo && [ '${{ env.TUNNEL_CONNECTION }}' == 'established' ] && openvpn3 session-manage --disconnect --config config.ovpn || echo
