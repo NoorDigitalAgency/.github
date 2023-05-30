@@ -55,4 +55,4 @@ jobs:
           previous-version: ${{ env.RELEASE_PREVIOUS_VERSION }}
 
       - id: reference
-        run: echo "::set-output name=reference::$([ '${{ inputs.worker }}' == 'true' ] && echo '${{ env.RELEASE_VERSION }}' || echo '${{ inputs.reference }}')"
+        run: echo "reference=$([ '${{ inputs.worker }}' == 'true' ] && echo '${{ env.RELEASE_VERSION }}' || echo '${{ inputs.reference }}')" >> $GITHUB_OUTPUT
