@@ -25,7 +25,7 @@ jobs:
           submodules: recursive
           token: ${{ secrets.PAT }}
 
-      - uses: actions/setup-dotnet@v2
+      - uses: actions/setup-dotnet@v3
         with:
           source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
           dotnet-version: '7.0.x'
