@@ -5,6 +5,7 @@ on:
 
 jobs:
   mark:
+    if: github.event.pull_request.draft != true
     name: Check Linked Issues
     runs-on: ubuntu-latest
     steps:
