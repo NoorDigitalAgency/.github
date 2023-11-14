@@ -8,7 +8,7 @@ on:
         description: Throws error on assignment failure
         default: true
         required: false
-
+        
 jobs:
   assign:
     if: github.event.pull_request.draft != true

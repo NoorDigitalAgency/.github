@@ -24,7 +24,7 @@ jobs:
           token: ${{ secrets.PAT }}
           ref: ${{ env.RELEASE_REFERENCE }}
 
-      - uses: actions/setup-dotnet@v2
+      - uses: actions/setup-dotnet@v3
         with:
           source-url: https://nuget.pkg.github.com/noordigitalagency/index.json
           dotnet-version: 6.0.x
