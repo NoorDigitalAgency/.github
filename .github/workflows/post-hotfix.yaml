@@ -21,45 +21,8 @@ jobs:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
-      - id: develop
-        uses: actions/github-script@v7
-        env:
-          PAT_TOKEN: ${{ github.token }}
-          HOTFIX_BRANCH: ${{ inputs.hotfix_branch }}
+      - uses: NoorDigitalAgency/post-hotfix@main
         with:
-          result-encoding: string
-          script: |
-              function wait(milliseconds) {
-                return new Promise((resolve) => setTimeout(resolve, milliseconds));
-              }
-              const inspect = require('util').inspect;
-              const token = process.env.PAT_TOKEN;
-              const branchName = process.env.HOTFIX_BRANCH;
-              try {
-                const title = 'Generated PR for hotfix/${{ env.RELEASE_VERSION }} into develop';
-                const body = '**Merge Back** pull request **(develop🠔${{ inputs.hotfix_branch }})** for **hotfix** version **${{ env.RELEASE_VERSION }}**.';
-                let pull = (await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, base: 'develop', head: '${{ inputs.hotfix_branch }}', title, body })).data;
-                while (pull.mergeable == null) {
-                  await wait(5000); 
-                  pull = (await github.rest.pulls.get({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pull.number })).data;
-                }
-                if (!pull.mergeable) {
-                  const url = new URL(context.payload.repository!.html_url!);
-                  const actor = context.actor;
-                  const githubUrl = `${url.protocol}//${actor}:${token}@${url.hostname}${url.pathname}.git`;
-                  await exec.exec('git', ['config', '--global', 'user.email', 'github@noor.se']);
-                  await exec.exec('git', ['config', '--global', 'user.name', '"Noor’s GitHub Bot"']);
-                  await exec.exec('git', ['clone', githubUrl, '.']);
-                  await exec.exec('git', ['checkout', '-b', branchName]);
-                  await exec.exec('git', ['pull', 'origin', branchName, '--ff']);
-                  await exec.exec('git', ['merge', 'origin/develop', '--ff', '-X', 'ours']);
-                  await exec.exec('git', ['push', '--set-upstream', 'origin', branchName]);
-                }
-                return `Merge-Back Pull Request for **develop**: [${title}](${pull.html_url})`;
-              } catch (error) {
-                core.startGroup('Error');
-                core.debug(`${inspect(error, { depth: 5 })}`);
-                core.endGroup();
-                core.warning('Failed to create merge-back pull request into develop.');
-              }
-      - run: echo '${{steps.develop.outputs.result}}' >> $GITHUB_STEP_SUMMARY
+          token: ${{ github.token }}
+          branch_name: ${{ inputs.hotfix_branch }}
+          release_version: ${{ env.RELEASE_VERSION }}
