@@ -29,7 +29,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-              function wait(milliseconds: number) {
+              function wait(milliseconds) {
                 return new Promise((resolve) => setTimeout(resolve, milliseconds));
               }
               const inspect = require('util').inspect;
