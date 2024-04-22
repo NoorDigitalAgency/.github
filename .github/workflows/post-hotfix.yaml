@@ -38,10 +38,10 @@ jobs:
               try {
                 const title = 'Generated PR for hotfix/${{ env.RELEASE_VERSION }} into develop';
                 const body = '**Merge Back** pull request **(develop🠔${{ inputs.hotfix_branch }})** for **hotfix** version **${{ env.RELEASE_VERSION }}**.';
-                let pullRequest = (await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, base: 'develop', head: '${{ inputs.hotfix_branch }}', title, body })).data;
+                let pull = (await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, base: 'develop', head: '${{ inputs.hotfix_branch }}', title, body })).data;
                 while (pull.mergeable == null) {
                   await wait(5000); 
-                  pullRequest = (await github.rest.pulls.get({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pull.number })).data;
+                  pull = (await github.rest.pulls.get({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pull.number })).data;
                 }
                 if (!pull.mergeable) {
                   const url = new URL(context.payload.repository!.html_url!);
@@ -55,7 +55,7 @@ jobs:
                   await exec.exec('git', ['merge', 'origin/develop', '--ff', '-X', 'ours']);
                   await exec.exec('git', ['push', '--set-upstream', 'origin', branchName]);
                 }
-                return `Merge-Back Pull Request for **develop**: [${title}](${pullRequest.html_url})`;
+                return `Merge-Back Pull Request for **develop**: [${title}](${pull.html_url})`;
               } catch (error) {
                 core.startGroup('Error');
                 core.debug(`${inspect(error, { depth: 5 })}`);
