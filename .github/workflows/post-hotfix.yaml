@@ -21,41 +21,8 @@ jobs:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
-      - id: develop
-        uses: actions/github-script@v6
+      - uses: NoorDigitalAgency/post-hotfix@main
         with:
-          result-encoding: string
-          script: |
-              const inspect = require('util').inspect;
-              try {
-                const title = 'Generated PR for hotfix/${{ env.RELEASE_VERSION }} into develop';
-                const body = '**Merge Back** pull request **(develop🠔${{ inputs.hotfix_branch }})** for **hotfix** version **${{ env.RELEASE_VERSION }}**.';
-                const pullRequest = (await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, base: 'develop', head: '${{ inputs.hotfix_branch }}', title, body })).data;
-                return `Merge-Back Pull Request for **develop**: [${title}](${pullRequest.html_url})`;
-              } catch (error) {
-                core.startGroup('Error');
-                core.debug(`${inspect(error, { depth: 5 })}`);
-                core.endGroup();
-                core.warning('Failed to create merge-back pull request into develop.');
-              }
-      - run: echo '${{steps.develop.outputs.result}}' >> $GITHUB_STEP_SUMMARY
-      - id: release
-        if: ${{ inputs.release_pull_request }}
-        uses: actions/github-script@v6
-        with:
-          result-encoding: string
-          script: |
-              const inspect = require('util').inspect;
-              try {
-                const title = 'Generated PR for hotfix/${{ env.RELEASE_VERSION }} into release';
-                const body = '**Merge Back** pull request **(release🠔${{ inputs.hotfix_branch }})** for **hotfix** version **${{ env.RELEASE_VERSION }}**.';
-                const pullRequest = (await github.rest.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, base: 'release', head: '${{ inputs.hotfix_branch }}', title, body })).data;
-                return `Merge-Back Pull Request for **release**: [${title}](${pullRequest.html_url})`;
-              } catch (error) {
-                core.startGroup('Error');
-                core.debug(`${inspect(error, { depth: 5 })}`);
-                core.endGroup();
-                core.warning('Failed to create merge-back pull request into release.');
-              }
-      - if: ${{ inputs.release_pull_request }}
-        run: echo '${{steps.release.outputs.result}}' >> $GITHUB_STEP_SUMMARY
+          token: '${{ github.token }}'
+          branch_name: '${{ inputs.hotfix_branch }}'
+          release_version: '${{ env.RELEASE_VERSION }}'
