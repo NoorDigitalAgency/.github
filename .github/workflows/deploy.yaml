@@ -30,6 +30,11 @@ on:
         type: boolean
         required: false
         default: false
+      deploy_to_kubernetes:
+        description: If the image should be deployed to Kubernetes
+        type: boolean
+        required: false
+        default: true
 
 jobs:
   deploy:
@@ -94,7 +99,8 @@ jobs:
           sudo apt update && sudo apt install openvpn3 && echo "$OPENVPN_CONFIG" > config.ovpn && echo "$OPENVPN_USERNAME" > config.login && echo "$OPENVPN_PASSWORD" >> config.login && \
           openvpn3 session-start --config config.ovpn && echo "TUNNEL_CONNECTION=established" >> $GITHUB_ENV || echo
 
-      - name: Kubernetes Resource Update
+      - if: inputs.deploy_to_kubernetes == true
+        name: Kubernetes Resource Update
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         run: |
