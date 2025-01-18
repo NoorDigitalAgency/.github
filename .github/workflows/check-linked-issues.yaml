@@ -9,7 +9,7 @@ jobs:
     name: Check Linked Issues
     runs-on: ubuntu-latest
     steps:
-      - uses: NoorDigitalAgency/issue-linker@main
+      - uses: NoorDigitalAgency/issue-linker@fortest
         with:
           token: ${{ secrets.PAT }}
           zenhub-key: ${{ secrets.ZENHUB_KEY }}
