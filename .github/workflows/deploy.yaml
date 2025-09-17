@@ -103,10 +103,11 @@ jobs:
         name: Kubernetes Resource Update
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          KUBECTL_VERSION: ${{ secrets.KUBECTL_VERSION != '' && secrets.KUBECTL_VERSION || inputs.kubectl_version }}
         run: |
           mkdir -p ~/.kube
           echo "$KUBE_CONFIG" > ~/.kube/config
-          curl -LO https://dl.k8s.io/release/${{ inputs.kubectl_version }}/bin/linux/amd64/kubectl
+          curl -LO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl
           chmod +x ./kubectl
           ./kubectl rollout restart ${{ fromJson(steps.analyzing.outputs.result).resource }} --namespace=${{ inputs.resource_namespace }}
 
