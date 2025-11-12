@@ -7,11 +7,6 @@ on:
         description: Branch name containing the hofix code
         type: string
         required: true
-      release_pull_request:
-        description: Create merge-back pull request into release
-        type: boolean
-        default: false
-        required: false
 
 jobs:
   pull-request:
