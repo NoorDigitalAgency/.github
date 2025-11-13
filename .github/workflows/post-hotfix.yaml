@@ -21,7 +21,7 @@ jobs:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
-      - uses: NoorDigitalAgency/post-hotfix@main
+      - uses: NoorDigitalAgency/post-hotfix@develop
         with:
           token: '${{ github.token }}'
           branch_name: '${{ inputs.hotfix_branch }}'
