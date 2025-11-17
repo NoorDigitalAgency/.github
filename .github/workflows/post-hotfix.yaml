@@ -7,6 +7,11 @@ on:
         description: Branch name containing the hofix code
         type: string
         required: true
+      stage:
+        description: The stage where the hotfix is being applied to
+        type: string
+        required: false
+        default: production
 
 jobs:
   pull-request:
@@ -16,8 +21,9 @@ jobs:
       - uses: NoorDigitalAgency/release-lookup@main
         with:
           token: ${{ github.token }}
-      - uses: NoorDigitalAgency/post-hotfix@main
+      - uses: NoorDigitalAgency/post-hotfix@develop
         with:
           token: '${{ github.token }}'
           branch_name: '${{ inputs.hotfix_branch }}'
           release_version: '${{ env.RELEASE_VERSION }}'
+          stage: '${{ inputs.stage }}'
