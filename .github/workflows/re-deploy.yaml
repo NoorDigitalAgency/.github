@@ -2,6 +2,11 @@ name: Re-deploy
 on:
   workflow_call:
     inputs:
+      application_name:
+        description: Optional application name; defaults to the calling repository name
+        type: string
+        required: false
+        default: ''
       version:
         description: Deployment Version
         type: string
@@ -40,12 +45,14 @@ jobs:
       - id: analyzing
         name: Analyzing
         uses: actions/github-script@v6
+        env:
+          APPLICATION_NAME: ${{ inputs.application_name }}
         with:
           script: |
             const version = '${{ inputs.version }}';
             const stage = '${{ inputs.stage }}';
             const resource = '${{ inputs.resource_type }}';
-            const name = context.payload.repository.name;
+            const name = (process.env.APPLICATION_NAME || '').trim() || context.payload.repository.name;
             const label = stage !== 'production' ? `-${ stage }` : '';
             return {
               version: `noorteam/${ name }:${ version }`,
