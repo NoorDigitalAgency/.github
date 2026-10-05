@@ -35,6 +35,11 @@ on:
         type: boolean
         required: false
         default: false
+      dockerfile:
+        description: Dockerfile to build, relative to the deployment folder artifact
+        type: string
+        required: false
+        default: Dockerfile
       deploy_to_kubernetes:
         description: If the image should be deployed to Kubernetes
         type: boolean
@@ -91,6 +96,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: ${{ inputs.dockerfile }}
           push: true
           tags: ${{ fromJson(steps.analyzing.outputs.result).tags }}
           build-args: E20R_ENV=${{ fromJson(steps.analyzing.outputs.result).environment }}
